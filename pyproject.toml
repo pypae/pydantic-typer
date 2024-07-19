@@ -1,0 +1,83 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "pydantic-typer"
+dynamic = ["version"]
+description = 'Typer extension to enable pydantic support'
+readme = "README.md"
+requires-python = ">=3.8"
+license = "MIT"
+keywords = []
+authors = [
+  { name = "Patrick Düggelin", email = "patrick.dueggelin@live.de" },
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: Implementation :: CPython",
+  "Programming Language :: Python :: Implementation :: PyPy",
+]
+dependencies = [
+  "pydantic",
+  "typer",
+]
+
+[project.urls]
+Documentation = "https://github.com/pypae/pydantic-typer#readme"
+Issues = "https://github.com/pypae/pydantic-typer/issues"
+Source = "https://github.com/pypae/pydantic-typer"
+
+[tool.hatch.version]
+path = "src/pydantic_typer/__about__.py"
+
+[tool.hatch.envs.dev]
+extra-dependencies = [
+  "mypy>=1.0.0",
+  "pytest",
+]
+
+[tool.hatch.envs.dev.scripts]
+check = "mypy --install-types --non-interactive {args:src/pydantic_typer tests}"
+
+[tool.hatch.envs.test]
+extra-dependencies = [
+  "pytest"
+]
+
+[tool.hatch.envs.hatch-static-analysis]
+config-path = "ruff_defaults.toml"
+
+[tool.ruff]
+extend = "ruff_defaults.toml"
+
+[tool.ruff.per-file-ignores]
+# Allow print statements in examples
+"examples/*.py" = ["T201"]
+# Allow assert in tests
+"tests/*.py" = ["S101"]
+
+[tool.coverage.run]
+source_pkgs = ["pydantic_typer", "tests"]
+branch = true
+parallel = true
+omit = [
+  "src/pydantic_typer/__about__.py",
+]
+
+[tool.coverage.paths]
+pydantic_typer = ["src/pydantic_typer", "*/pydantic-typer/src/pydantic_typer"]
+tests = ["tests", "*/pydantic-typer/tests"]
+
+[tool.coverage.report]
+exclude_lines = [
+  "no cov",
+  "if __name__ == .__main__.:",
+  "if TYPE_CHECKING:",
+]
