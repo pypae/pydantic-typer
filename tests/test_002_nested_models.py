@@ -4,7 +4,7 @@ import sys
 import typer
 from typer.testing import CliRunner
 
-from examples import example_002_sub_models as mod
+from examples import example_002_nested_models as mod
 
 runner = CliRunner()
 
@@ -30,7 +30,7 @@ def test_parse_pydantic_model():
         ],
     )
     assert (
-        "name='Jeff' age=None pet=Pet(name='Lassie', species='dog') <class 'examples.example_002_sub_models.Person'>"
+        "name='Jeff' age=None pet=Pet(name='Lassie', species='dog') <class 'examples.example_002_nested_models.Person'>"
         in result.output
     )
 

@@ -38,62 +38,13 @@ python main.py
 
 Simply add the `@enable_pydantic` decorator to any function that you use with `typer.run`:
 
-```python
-import pydantic
-import typer
-
-from pydantic_typer import enable_pydantic
-
-
-class User(pydantic.BaseModel):
-    id: int
-    name: str = "Jane Doe"
-
-
-@enable_pydantic
-def main(num: int, user: User):
-    print(num, type(num))
-    print(user, type(user))
-
-
-if __name__ == "__main__":
-    typer.run(main)
-```
+{example_001_basic}
 
 ### Usage with nested models
 
 `@enable_pydantic` also works with nested pydantic models:
 
-```python
-from __future__ import annotations
-
-from typing import Optional
-
-import pydantic
-import typer
-
-from pydantic_typer import enable_pydantic
-
-
-class Pet(pydantic.BaseModel):
-    name: str
-    species: str
-
-
-class Person(pydantic.BaseModel):
-    name: str
-    age: Optional[float] = None  # noqa: UP007 typer does not support float | None yet, see https://github.com/tiangolo/typer/pull/548
-    pet: Pet
-
-
-@enable_pydantic
-def main(person: Person):
-    print(person, type(person))
-
-
-if __name__ == "__main__":
-    typer.run(main)
-```
+{example_002_nested_models}
 
 ## License
 
