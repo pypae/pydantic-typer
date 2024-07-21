@@ -100,10 +100,11 @@ if __name__ == "__main__":
 You can annotate the parameters with `typer.Argument` to make all model fields CLI arguments:
 
 ```python
-from typing import Annotated
+from __future__ import annotations
 
 import pydantic
 import typer
+from typing_extensions import Annotated
 
 from pydantic_typer import enable_pydantic
 
@@ -122,6 +123,41 @@ def main(num: Annotated[int, typer.Option()], user: Annotated[User, typer.Argume
 if __name__ == "__main__":
     typer.run(main)
 ```
+
+<details>
+<summary>*Note: You can also override annotations directly on the pydantic model fields:*</summary>
+
+```python
+from __future__ import annotations
+
+import pydantic
+import typer
+from typing_extensions import Annotated
+
+from pydantic_typer import enable_pydantic
+
+
+class User(pydantic.BaseModel):
+    id: Annotated[int, typer.Argument(metavar="THE_ID")]
+    name: Annotated[str, typer.Option()]
+
+
+@enable_pydantic
+def main(num: Annotated[int, typer.Option()], user: Annotated[User, typer.Argument()]):
+    print(num, type(num))
+    print(user, type(user))
+
+
+if __name__ == "__main__":
+    typer.run(main)
+```
+
+Here, `User` is a `typer.Argument`, but we manually override the fields again:
+
+- We override the `metavar` of to `User.id` be `THE_ID`
+- And `User.name` to be a `typer.Option`
+
+</details>
 
 ## License
 

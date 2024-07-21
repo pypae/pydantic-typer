@@ -52,6 +52,18 @@ You can annotate the parameters with `typer.Argument` to make all model fields C
 
 {example_003_annotated_argument}
 
+<details>
+<summary>*Note: You can also override annotations directly on the pydantic model fields:*</summary>
+
+{example_004_argument_override}
+
+Here, `User` is a `typer.Argument`, but we manually override the fields again:
+
+- We override the `metavar` of to `User.id` be `THE_ID`
+- And `User.name` to be a `typer.Option`
+
+</details>
+
 ## License
 
 `pydantic-typer` is distributed under the terms of the [MIT](https://spdx.org/licenses/MIT.html) license.

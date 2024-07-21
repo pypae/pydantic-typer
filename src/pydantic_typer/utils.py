@@ -20,7 +20,7 @@ def deep_update(mapping: dict[KeyType, Any], *updating_mappings: dict[KeyType, A
     return updated_mapping
 
 
-def inspect_signature(func: Callable[..., Any]) -> inspect.Signature:
+def inspect_signature(func: Callable[..., Any]) -> inspect.Signature:  # pragma: no cover
     if sys.version_info >= (3, 10):
         signature = inspect.signature(func, eval_str=True)
     else:

@@ -7,7 +7,7 @@ from typing import Any, Callable
 import pydantic
 from typer import Option
 from typer.main import lenient_issubclass
-from typer.models import ParameterInfo
+from typer.models import OptionInfo, ParameterInfo
 from typer.utils import _split_annotation_from_typer_annotations
 from typing_extensions import Annotated
 
@@ -17,13 +17,14 @@ PYDANTIC_FIELD_SEPARATOR = "."
 
 
 def _flatten_pydantic_model(
-    model: pydantic.BaseModel, ancestors: list[str], default_typer_param=None
+    model: pydantic.BaseModel, ancestors: list[str], ancestor_typer_param=None
 ) -> dict[str, inspect.Parameter]:
     pydantic_parameters = {}
     for field_name, field in model.model_fields.items():
         qualifier = [*ancestors, field_name]
         sub_name = f"_pydantic_{'_'.join(qualifier)}"
         if lenient_issubclass(field.annotation, pydantic.BaseModel):
+            # TODO pass ancestor_typer_param
             params = _flatten_pydantic_model(field.annotation, qualifier)  # type: ignore
             pydantic_parameters.update(params)
         else:
@@ -35,8 +36,11 @@ def _flatten_pydantic_model(
             existing_typer_params = [meta for meta in field.metadata if isinstance(meta, ParameterInfo)]
             if existing_typer_params:
                 typer_param = existing_typer_params[0]
-            elif default_typer_param:
-                typer_param = default_typer_param
+                if isinstance(typer_param, OptionInfo) and not typer_param.param_decls:
+                    # If the the option was not named manually, use the default naming scheme
+                    typer_param.param_decls = (f"--{PYDANTIC_FIELD_SEPARATOR.join(qualifier)}",)
+            elif ancestor_typer_param:
+                typer_param = ancestor_typer_param
             else:
                 typer_param = Option(f"--{PYDANTIC_FIELD_SEPARATOR.join(qualifier)}")
             pydantic_parameters[sub_name] = inspect.Parameter(
