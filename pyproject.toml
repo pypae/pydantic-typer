@@ -42,6 +42,7 @@ extra-dependencies = [
   "mypy>=1.0.0",
   "pytest",
   "coverage",
+  "smokeshow",
 ]
 
 [tool.hatch.envs.dev.scripts]
