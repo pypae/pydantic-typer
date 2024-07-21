@@ -25,6 +25,6 @@ jobs:
       - name: Publish coverage report
         run: hatch run dev:smokeshow upload htmlcov
         env:
-          SMOKESHOW_GITHUB_STATUS_DESCRIPTION: Test Coverage {coverage-percentage}
+          SMOKESHOW_GITHUB_STATUS_DESCRIPTION: Coverage {coverage-percentage}
           SMOKESHOW_GITHUB_COVERAGE_THRESHOLD: 100
           SMOKESHOW_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
