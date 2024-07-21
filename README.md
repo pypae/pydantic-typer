@@ -8,7 +8,9 @@ Do not edit `README.md` manually, instead edit `docs/README.template.md` and run
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/pydantic-typer.svg)](https://pypi.org/project/pydantic-typer)
 [![Test Coverage](https://coverage-badge.samuelcolvin.workers.dev/pypae/pydantic-typer.svg)](https://coverage-badge.samuelcolvin.workers.dev/redirect/pypae/pydantic-typer)
 
-Typer extension to enable pydantic support
+[Typer](https://github.com/tiangolo/typer) extension to enable pydantic support
+
+_:construction: This package is still in early development and some things might not work as expected, or change between versions. :constuction:_
 
 ---
 
@@ -27,6 +29,8 @@ pip install pydantic-typer
 _Note: `pydantic-typer` comes with `pydantic` and `typer` as dependencies, so you don't need to install anything else._
 
 ## Usage
+
+For general `typer` usage, please refer to the [typer documentation](https://typer.tiangolo.com/).
 
 All the code blocks below can be copied and used directly (they are tested Python files).
 To run any of the examples, copy the code to a file `main.py`, and run it:
@@ -126,7 +130,11 @@ if __name__ == "__main__":
 ```
 
 <details>
-<summary>*Note: You can also override annotations directly on the pydantic model fields:*</summary>
+<summary>
+
+_Note: You can also override annotations directly on the pydantic model fields:_
+
+</summary>
 
 ```python
 from __future__ import annotations
@@ -159,6 +167,41 @@ Here, `User` is a `typer.Argument`, but we manually override the fields again:
 - And `User.name` to be a `typer.Option`
 
 </details>
+
+### Use pydantic models in multiple commands
+
+For larger `typer` apps, you can use `pydantic_typer.PydanticTyper` instead of annotating each command function individually to enable pydantic models on all commands:
+
+```python
+from __future__ import annotations
+
+import pydantic
+import typer
+from typing_extensions import Annotated
+
+from pydantic_typer import PydanticTyper
+
+app = PydanticTyper()
+
+
+class User(pydantic.BaseModel):
+    id: int
+    name: Annotated[str, typer.Option()] = "John"
+
+
+@app.command()
+def hi(user: User):
+    print(f"Hi {user}")
+
+
+@app.command()
+def bye(user: User):
+    print(f"Bye {user}")
+
+
+if __name__ == "__main__":
+    app()
+```
 
 ## License
 

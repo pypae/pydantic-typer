@@ -26,3 +26,11 @@ def inspect_signature(func: Callable[..., Any]) -> inspect.Signature:  # pragma:
     else:
         signature = inspect.signature(func)
     return signature
+
+
+_T = TypeVar("_T")
+
+
+def copy_type(_: _T) -> Callable[[Any], _T]:
+    """Source https://github.com/python/typing/issues/769#issuecomment-903760354"""
+    return lambda x: x

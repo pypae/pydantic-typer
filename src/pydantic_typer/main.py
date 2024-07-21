@@ -2,16 +2,16 @@ from __future__ import annotations
 
 import inspect
 from functools import wraps
-from typing import Any, Callable
+from typing import Any, Callable, overload
 
 import pydantic
-from typer import Option
-from typer.main import lenient_issubclass
+from typer import Option, Typer
+from typer.main import CommandFunctionType, lenient_issubclass
 from typer.models import OptionInfo, ParameterInfo
 from typer.utils import _split_annotation_from_typer_annotations
 from typing_extensions import Annotated
 
-from pydantic_typer.utils import deep_update, inspect_signature
+from pydantic_typer.utils import copy_type, deep_update, inspect_signature
 
 PYDANTIC_FIELD_SEPARATOR = "."
 
@@ -24,7 +24,7 @@ def _flatten_pydantic_model(
         qualifier = [*ancestors, field_name]
         sub_name = f"_pydantic_{'_'.join(qualifier)}"
         if lenient_issubclass(field.annotation, pydantic.BaseModel):
-            # TODO pass ancestor_typer_param
+            # TODO: pass ancestor_typer_param
             params = _flatten_pydantic_model(field.annotation, qualifier)  # type: ignore
             pydantic_parameters.update(params)
         else:
@@ -52,7 +52,7 @@ def _flatten_pydantic_model(
     return pydantic_parameters
 
 
-def enable_pydantic(callback: Callable[..., Any]) -> Callable[..., Any]:
+def enable_pydantic(callback: CommandFunctionType) -> CommandFunctionType:
     original_signature = inspect_signature(callback)
 
     pydantic_parameters = {}
@@ -73,6 +73,7 @@ def enable_pydantic(callback: Callable[..., Any]) -> Callable[..., Any]:
         return_annotation=original_signature.return_annotation,
     )
 
+    @copy_type(callback)
     @wraps(callback)
     def wrapper(*args, **kwargs):  # type: ignore[no-untyped-def]
         converted_kwargs = kwargs.copy()
@@ -94,3 +95,15 @@ def enable_pydantic(callback: Callable[..., Any]) -> Callable[..., Any]:
     # Copy annotations to make forward references work in Python <= 3.9
     wrapper.__annotations__ = {k: v.annotation for k, v in extended_signature.parameters.items()}
     return wrapper
+
+
+class PydanticTyper(Typer):
+    @copy_type(Typer.command)
+    def command(self, *args, **kwargs):
+        original_decorator = super().command(*args, **kwargs)
+
+        def decorator_override(f: CommandFunctionType) -> CommandFunctionType:
+            wrapped_f = enable_pydantic(f)
+            return original_decorator(wrapped_f)
+
+        return decorator_override
