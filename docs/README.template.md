@@ -10,7 +10,8 @@ Do not edit `README.md` manually, instead edit `docs/README.template.md` and run
 
 [Typer](https://github.com/tiangolo/typer) extension to enable pydantic support
 
-_:construction: This package is still in early development and some things might not work as expected, or change between versions. :constuction:_
+> [!WARNING]  
+> This package is still in early development and some things might not work as expected, or change between versions.
 
 ---
 
@@ -26,7 +27,8 @@ _:construction: This package is still in early development and some things might
 pip install pydantic-typer
 ```
 
-_Note: `pydantic-typer` comes with `pydantic` and `typer` as dependencies, so you don't need to install anything else._
+> [!NOTE]
+> `pydantic-typer` comes with `pydantic` and `typer` as dependencies, so you don't need to install anything else.
 
 ## Usage
 
@@ -58,11 +60,7 @@ You can annotate the parameters with `typer.Argument` to make all model fields C
 {example_003_annotated_argument}
 
 <details>
-<summary>
-
-_Note: You can also override annotations directly on the pydantic model fields:_
-
-</summary>
+<summary>:bulb: You can also override annotations directly on the pydantic model fields:</summary>
 
 {example_004_argument_override}
 
