@@ -95,6 +95,34 @@ if __name__ == "__main__":
     typer.run(main)
 ```
 
+### Use `pydantic` models with `typer.Argument`
+
+You can annotate the parameters with `typer.Argument` to make all model fields CLI arguments:
+
+```python
+from typing import Annotated
+
+import pydantic
+import typer
+
+from pydantic_typer import enable_pydantic
+
+
+class User(pydantic.BaseModel):
+    id: int
+    name: str
+
+
+@enable_pydantic
+def main(num: Annotated[int, typer.Option()], user: Annotated[User, typer.Argument()]):
+    print(num, type(num))
+    print(user, type(user))
+
+
+if __name__ == "__main__":
+    typer.run(main)
+```
+
 ## License
 
 `pydantic-typer` is distributed under the terms of the [MIT](https://spdx.org/licenses/MIT.html) license.

@@ -46,6 +46,12 @@ Simply add the `@enable_pydantic` decorator to any function that you use with `t
 
 {example_002_nested_models}
 
+### Use `pydantic` models with `typer.Argument`
+
+You can annotate the parameters with `typer.Argument` to make all model fields CLI arguments:
+
+{example_003_annotated_argument}
+
 ## License
 
 `pydantic-typer` is distributed under the terms of the [MIT](https://spdx.org/licenses/MIT.html) license.
