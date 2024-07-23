@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import inspect
 import sys
-from typing import Any, Callable, TypeVar
+from typing import Any, Callable, TypeVar, get_type_hints
 
 KeyType = TypeVar("KeyType")
 
@@ -24,7 +24,15 @@ def inspect_signature(func: Callable[..., Any]) -> inspect.Signature:  # pragma:
     if sys.version_info >= (3, 10):
         signature = inspect.signature(func, eval_str=True)
     else:
-        signature = inspect.signature(func)
+        raw_signature = inspect.signature(func)
+        type_hints = get_type_hints(func)
+        resolved_params = []
+        for p in raw_signature.parameters:
+            old_param = raw_signature.parameters[p]
+            resolved_params.append(
+                inspect.Parameter(old_param.name, old_param.kind, default=old_param.default, annotation=type_hints[p])
+            )
+        signature = raw_signature.replace(parameters=resolved_params)
     return signature
 
 
