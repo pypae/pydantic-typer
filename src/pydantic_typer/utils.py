@@ -20,18 +20,27 @@ def deep_update(mapping: dict[KeyType, Any], *updating_mappings: dict[KeyType, A
     return updated_mapping
 
 
+def _get_type_hints(func: Callable[..., Any]):
+    if sys.version_info >= (3, 9):
+        hints = get_type_hints(func, include_extras=True)
+    else:
+        hints = get_type_hints(func)
+    return hints
+
+
 def inspect_signature(func: Callable[..., Any]) -> inspect.Signature:  # pragma: no cover
     if sys.version_info >= (3, 10):
         signature = inspect.signature(func, eval_str=True)
     else:
         raw_signature = inspect.signature(func)
-        type_hints = get_type_hints(func)
+        type_hints = _get_type_hints(func)
         resolved_params = []
         for p in raw_signature.parameters:
             old_param = raw_signature.parameters[p]
             resolved_params.append(
                 inspect.Parameter(old_param.name, old_param.kind, default=old_param.default, annotation=type_hints[p])
             )
+
         signature = raw_signature.replace(parameters=resolved_params)
     return signature
 
