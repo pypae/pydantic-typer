@@ -5,7 +5,7 @@ from functools import wraps
 from typing import Any, Callable, overload
 
 import pydantic
-from typer import Option, Typer
+from typer import BadParameter, Option, Typer
 from typer.main import CommandFunctionType, lenient_issubclass
 from typer.models import OptionInfo, ParameterInfo
 from typer.utils import _split_annotation_from_typer_annotations
@@ -94,6 +94,24 @@ def enable_pydantic(callback: CommandFunctionType) -> CommandFunctionType:
     wrapper.__signature__ = extended_signature  # type: ignore
     # Copy annotations to make forward references work in Python <= 3.9
     wrapper.__annotations__ = {k: v.annotation for k, v in extended_signature.parameters.items()}
+    return wrapper
+
+
+def enable_pydantic_type_validation(callback: CommandFunctionType) -> CommandFunctionType:
+    signature = inspect_signature(callback)
+
+    @copy_type(callback)
+    @wraps(callback)
+    def wrapper(*args, **kwargs):  # type: ignore[no-untyped-def]
+        bound_params = signature.bind(*args, **kwargs)
+        for name, value in bound_params.arguments.items():
+            type_adapter = pydantic.TypeAdapter(signature.parameters[name].annotation)
+            try:
+                bound_params.arguments[name] = type_adapter.validate_python(value)
+            except pydantic.ValidationError as e:
+                raise BadParameter(message=str(e), param_hint=name) from e
+        callback(*bound_params.args, **bound_params.kwargs)
+
     return wrapper
 
 
