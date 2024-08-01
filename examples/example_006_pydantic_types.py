@@ -1,5 +1,5 @@
 import typer
-from pydantic.types import conint
+from pydantic import HttpUrl, conint
 
 from pydantic_typer import enable_pydantic_type_validation
 
@@ -7,8 +7,9 @@ EvenInt = conint(multiple_of=2)
 
 
 @enable_pydantic_type_validation
-def main(num: EvenInt):  # type: ignore
+def main(num: EvenInt, url: HttpUrl):  # type: ignore
     print(num, type(num))
+    print(url, type(url))
 
 
 if __name__ == "__main__":
