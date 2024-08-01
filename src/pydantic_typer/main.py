@@ -149,8 +149,8 @@ class PydanticTyper(Typer):
         original_decorator = super().command(*args, **kwargs)
 
         def decorator_override(f: CommandFunctionType) -> CommandFunctionType:
-            wrapped_f = enable_pydantic(f)
             wrapped_f = enable_pydantic_type_validation(f)
+            wrapped_f = enable_pydantic(f)
             return original_decorator(wrapped_f)
 
         return decorator_override
