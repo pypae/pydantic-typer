@@ -1,3 +1,4 @@
+import click
 import typer
 from pydantic import HttpUrl, conint
 
@@ -7,7 +8,7 @@ EvenInt = conint(multiple_of=2)
 
 
 @enable_pydantic_type_validation
-def main(num: EvenInt, url: HttpUrl):  # type: ignore
+def main(num: EvenInt, url: HttpUrl, ctx: click.Context):  # type: ignore
     print(num, type(num))
     print(url, type(url))
 

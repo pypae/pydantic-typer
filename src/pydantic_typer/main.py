@@ -8,7 +8,7 @@ import click
 import pydantic
 from typer import BadParameter, Option, Typer
 from typer.main import CommandFunctionType, get_click_param, get_params_from_function, lenient_issubclass
-from typer.models import OptionInfo, ParameterInfo, ParamMeta
+from typer.models import OptionInfo, ParameterInfo
 from typer.utils import _split_annotation_from_typer_annotations
 from typing_extensions import Annotated
 
@@ -130,7 +130,10 @@ def enable_pydantic_type_validation(callback: CommandFunctionType) -> CommandFun
     def wrapper(*args, **kwargs):  # type: ignore[no-untyped-def]
         bound_params = original_signature.bind(*args, **kwargs)
         for name, value in bound_params.arguments.items():
-            type_adapter = pydantic.TypeAdapter(original_signature.parameters[name].annotation)
+            try:
+                type_adapter = pydantic.TypeAdapter(original_signature.parameters[name].annotation)
+            except pydantic.PydanticSchemaGenerationError:
+                continue
             try:
                 bound_params.arguments[name] = type_adapter.validate_python(value)
             except pydantic.ValidationError as e:
