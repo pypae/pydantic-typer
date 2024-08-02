@@ -20,7 +20,7 @@ def deep_update(mapping: dict[KeyType, Any], *updating_mappings: dict[KeyType, A
     return updated_mapping
 
 
-def _get_type_hints(func: Callable[..., Any]):
+def _get_type_hints(func: Callable[..., Any]):  # pragma: no cover
     if sys.version_info >= (3, 9):
         hints = get_type_hints(func, include_extras=True)
     else:
