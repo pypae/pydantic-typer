@@ -27,7 +27,8 @@ Do not edit `README.md` manually, instead edit `docs/README.template.md` and run
 pip install pydantic-typer
 ```
 
-> [!NOTE] > `pydantic-typer` comes with `pydantic` and `typer` as dependencies, so you don't need to install anything else.
+> [!NOTE]
+> `pydantic-typer` comes with `pydantic` and `typer` as dependencies, so you don't need to install anything else.
 
 ## Usage
 
@@ -42,13 +43,12 @@ python main.py
 
 ### Basic Usage
 
-Simply add the `@enable_pydantic` decorator to any function that you use with `typer.run`:
+Simply use `pydantic_typer.run` instead of `typer.run` to enable pydantic support:
 
 ```python
 import pydantic
-import typer
 
-from pydantic_typer import enable_pydantic
+import pydantic_typer
 
 
 class User(pydantic.BaseModel):
@@ -56,19 +56,18 @@ class User(pydantic.BaseModel):
     name: str = "Jane Doe"
 
 
-@enable_pydantic
 def main(num: int, user: User):
     print(num, type(num))
     print(user, type(user))
 
 
 if __name__ == "__main__":
-    typer.run(main)
+    pydantic_typer.run(main)
 ```
 
 ### Usage with nested models
 
-`@enable_pydantic` also works with nested pydantic models:
+`pydantic_typer.run` also works with nested pydantic models:
 
 ```python
 from __future__ import annotations
@@ -76,9 +75,8 @@ from __future__ import annotations
 from typing import Optional
 
 import pydantic
-import typer
 
-from pydantic_typer import enable_pydantic
+import pydantic_typer
 
 
 class Pet(pydantic.BaseModel):
@@ -92,13 +90,12 @@ class Person(pydantic.BaseModel):
     pet: Pet
 
 
-@enable_pydantic
 def main(person: Person):
     print(person, type(person))
 
 
 if __name__ == "__main__":
-    typer.run(main)
+    pydantic_typer.run(main)
 ```
 
 ### Use `pydantic` models with `typer.Argument`
@@ -112,7 +109,7 @@ import pydantic
 import typer
 from typing_extensions import Annotated
 
-from pydantic_typer import enable_pydantic
+import pydantic_typer
 
 
 class User(pydantic.BaseModel):
@@ -120,14 +117,13 @@ class User(pydantic.BaseModel):
     name: str
 
 
-@enable_pydantic
 def main(num: Annotated[int, typer.Option()], user: Annotated[User, typer.Argument()]):
     print(num, type(num))
     print(user, type(user))
 
 
 if __name__ == "__main__":
-    typer.run(main)
+    pydantic_typer.run(main)
 ```
 
 <details>
@@ -140,7 +136,7 @@ import pydantic
 import typer
 from typing_extensions import Annotated
 
-from pydantic_typer import enable_pydantic
+import pydantic_typer
 
 
 class User(pydantic.BaseModel):
@@ -148,14 +144,13 @@ class User(pydantic.BaseModel):
     name: Annotated[str, typer.Option()]
 
 
-@enable_pydantic
 def main(num: Annotated[int, typer.Option()], user: Annotated[User, typer.Argument()]):
     print(num, type(num))
     print(user, type(user))
 
 
 if __name__ == "__main__":
-    typer.run(main)
+    pydantic_typer.run(main)
 ```
 
 Here, `User` is a `typer.Argument`, but we manually override the fields again:
@@ -167,7 +162,7 @@ Here, `User` is a `typer.Argument`, but we manually override the fields again:
 
 ### Use pydantic models in multiple commands
 
-For larger `typer` apps, you can use `pydantic_typer.PydanticTyper` instead of annotating each command function individually to enable pydantic models on all commands:
+For larger `typer` apps, you can use `pydantic_typer.Typer` instead of annotating each command function individually to enable pydantic models on all commands:
 
 ```python
 from __future__ import annotations
@@ -176,9 +171,9 @@ import pydantic
 import typer
 from typing_extensions import Annotated
 
-from pydantic_typer import PydanticTyper
+from pydantic_typer import Typer
 
-app = PydanticTyper()
+app = Typer()
 
 
 class User(pydantic.BaseModel):
@@ -209,19 +204,18 @@ import click
 import typer
 from pydantic import HttpUrl, conint
 
-from pydantic_typer import enable_pydantic_type_validation
+import pydantic_typer
 
 EvenInt = conint(multiple_of=2)
 
 
-@enable_pydantic_type_validation
 def main(num: EvenInt, url: HttpUrl, ctx: click.Context):  # type: ignore
     print(num, type(num))
     print(url, type(url))
 
 
 if __name__ == "__main__":
-    typer.run(main)
+    pydantic_typer.run(main)
 ```
 
 ## License

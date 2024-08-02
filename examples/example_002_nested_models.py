@@ -3,9 +3,8 @@ from __future__ import annotations
 from typing import Optional
 
 import pydantic
-import typer
 
-from pydantic_typer import enable_pydantic
+import pydantic_typer
 
 
 class Pet(pydantic.BaseModel):
@@ -19,10 +18,9 @@ class Person(pydantic.BaseModel):
     pet: Pet
 
 
-@enable_pydantic
 def main(person: Person):
     print(person, type(person))
 
 
 if __name__ == "__main__":
-    typer.run(main)
+    pydantic_typer.run(main)

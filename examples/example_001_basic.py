@@ -1,7 +1,6 @@
 import pydantic
-import typer
 
-from pydantic_typer import enable_pydantic
+import pydantic_typer
 
 
 class User(pydantic.BaseModel):
@@ -9,11 +8,10 @@ class User(pydantic.BaseModel):
     name: str = "Jane Doe"
 
 
-@enable_pydantic
 def main(num: int, user: User):
     print(num, type(num))
     print(user, type(user))
 
 
 if __name__ == "__main__":
-    typer.run(main)
+    pydantic_typer.run(main)

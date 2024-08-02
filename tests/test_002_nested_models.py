@@ -1,14 +1,14 @@
 import subprocess
 import sys
 
-import typer
 from typer.testing import CliRunner
 
+import pydantic_typer
 from examples import example_002_nested_models as mod
 
 runner = CliRunner()
 
-app = typer.Typer()
+app = pydantic_typer.Typer()
 app.command()(mod.main)
 
 

@@ -4,9 +4,9 @@ import pydantic
 import typer
 from typing_extensions import Annotated
 
-from pydantic_typer import PydanticTyper
+from pydantic_typer import Typer
 
-app = PydanticTyper()
+app = Typer()
 
 
 class User(pydantic.BaseModel):

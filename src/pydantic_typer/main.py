@@ -2,11 +2,12 @@ from __future__ import annotations
 
 import inspect
 from functools import wraps
-from typing import Any
+from typing import Any, Callable
 
 import click
 import pydantic
-from typer import BadParameter, Option, Typer
+from typer import BadParameter, Option
+from typer import Typer as TyperBase
 from typer.main import CommandFunctionType, get_click_param, get_params_from_function, lenient_issubclass
 from typer.models import OptionInfo, ParameterInfo
 from typer.utils import _split_annotation_from_typer_annotations
@@ -110,11 +111,12 @@ def enable_pydantic_type_validation(callback: CommandFunctionType) -> CommandFun
     for param_name, param in parameters.items():
         original_parameter = original_signature.parameters[param_name]
         if lenient_issubclass(param.annotation, click.Context):
+            # click.Context should not be modified
             continue
         # We don't know wheter to use pydantic or typer to parse a param without checking if typer supports it.
         try:
             get_click_param(param)
-        except RuntimeError as e:
+        except RuntimeError:
             # TODO: don't use raw str, but copy other annotations
             updated_parameter = inspect.Parameter(
                 param_name, kind=original_parameter.kind, default=original_parameter.default, annotation=str
@@ -146,14 +148,20 @@ def enable_pydantic_type_validation(callback: CommandFunctionType) -> CommandFun
     return wrapper
 
 
-class PydanticTyper(Typer):
-    @copy_type(Typer.command)
+class Typer(TyperBase):
+    @copy_type(TyperBase.command)
     def command(self, *args, **kwargs):
         original_decorator = super().command(*args, **kwargs)
 
         def decorator_override(f: CommandFunctionType) -> CommandFunctionType:
-            wrapped_f = enable_pydantic_type_validation(f)
-            wrapped_f = enable_pydantic(f)
-            return original_decorator(wrapped_f)
+            f = enable_pydantic(f)
+            f = enable_pydantic_type_validation(f)
+            return original_decorator(f)
 
         return decorator_override
+
+
+def run(function: Callable[..., Any]) -> None:
+    app = Typer(add_completion=False)
+    app.command()(function)
+    app()

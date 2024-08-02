@@ -1,7 +1,6 @@
 import subprocess
 import sys
 
-import typer
 from typer.testing import CliRunner
 
 from examples import example_005_multi_commands as mod

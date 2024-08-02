@@ -4,7 +4,7 @@ import pydantic
 import typer
 from typing_extensions import Annotated
 
-from pydantic_typer import enable_pydantic
+import pydantic_typer
 
 
 class User(pydantic.BaseModel):
@@ -12,11 +12,10 @@ class User(pydantic.BaseModel):
     name: Annotated[str, typer.Option()]
 
 
-@enable_pydantic
 def main(num: Annotated[int, typer.Option()], user: Annotated[User, typer.Argument()]):
     print(num, type(num))
     print(user, type(user))
 
 
 if __name__ == "__main__":
-    typer.run(main)
+    pydantic_typer.run(main)
