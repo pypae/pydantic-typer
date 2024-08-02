@@ -37,6 +37,10 @@ Source = "https://github.com/pypae/pydantic-typer"
 [tool.hatch.version]
 path = "src/pydantic_typer/__about__.py"
 
+
+[[tool.hatch.envs.dev.matrix]]
+python = ["3.12", "3.11", "3.10", "3.9", "3.8"]
+
 [tool.hatch.envs.dev]
 extra-dependencies = [
   "mypy>=1.0.0",

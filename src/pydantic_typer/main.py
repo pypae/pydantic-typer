@@ -2,11 +2,12 @@ from __future__ import annotations
 
 import inspect
 from functools import wraps
-from typing import Any, Callable, overload
+from typing import Any
 
+import click
 import pydantic
-from typer import Option, Typer
-from typer.main import CommandFunctionType, lenient_issubclass
+from typer import BadParameter, Option, Typer
+from typer.main import CommandFunctionType, get_click_param, get_params_from_function, lenient_issubclass
 from typer.models import OptionInfo, ParameterInfo
 from typer.utils import _split_annotation_from_typer_annotations
 from typing_extensions import Annotated
@@ -97,12 +98,61 @@ def enable_pydantic(callback: CommandFunctionType) -> CommandFunctionType:
     return wrapper
 
 
+def enable_pydantic_type_validation(callback: CommandFunctionType) -> CommandFunctionType:
+    original_signature = inspect_signature(callback)
+
+    # Change the annotation of unsupported types to str to be parsed by pydantic.
+    # Adapted from https://github.com/tiangolo/typer/blob/95b767e38a98ee287a7a0e28176284836e1188c2/typer/main.py#L543
+    # TODO: it's not ideal to call get_params_from_function and get_click_param here,
+    # because it will be called in typer again, but the annotations supported by typer are quite dynamic.
+    parameters = get_params_from_function(callback)
+    updated_parameters = dict(original_signature.parameters)
+    for param_name, param in parameters.items():
+        original_parameter = original_signature.parameters[param_name]
+        if lenient_issubclass(param.annotation, click.Context):
+            continue
+        # We don't know wheter to use pydantic or typer to parse a param without checking if typer supports it.
+        try:
+            get_click_param(param)
+        except RuntimeError as e:
+            # TODO: don't use raw str, but copy other annotations
+            updated_parameter = inspect.Parameter(
+                param_name, kind=original_parameter.kind, default=original_parameter.default, annotation=str
+            )
+            updated_parameters[param_name] = updated_parameter
+
+    new_signature = inspect.Signature(
+        parameters=list(updated_parameters.values()), return_annotation=original_signature.return_annotation
+    )
+
+    @copy_type(callback)
+    @wraps(callback)
+    def wrapper(*args, **kwargs):  # type: ignore[no-untyped-def]
+        bound_params = original_signature.bind(*args, **kwargs)
+        for name, value in bound_params.arguments.items():
+            try:
+                type_adapter = pydantic.TypeAdapter(original_signature.parameters[name].annotation)
+            except pydantic.PydanticSchemaGenerationError:
+                continue
+            try:
+                bound_params.arguments[name] = type_adapter.validate_python(value)
+            except pydantic.ValidationError as e:
+                raise BadParameter(message=e.errors()[0]["msg"], param_hint=name) from e
+        callback(*bound_params.args, **bound_params.kwargs)
+
+    wrapper.__signature__ = new_signature  # type: ignore
+    # Copy annotations to make forward references work in Python <= 3.9
+    wrapper.__annotations__ = {k: v.annotation for k, v in new_signature.parameters.items()}
+    return wrapper
+
+
 class PydanticTyper(Typer):
     @copy_type(Typer.command)
     def command(self, *args, **kwargs):
         original_decorator = super().command(*args, **kwargs)
 
         def decorator_override(f: CommandFunctionType) -> CommandFunctionType:
+            wrapped_f = enable_pydantic_type_validation(f)
             wrapped_f = enable_pydantic(f)
             return original_decorator(wrapped_f)
 

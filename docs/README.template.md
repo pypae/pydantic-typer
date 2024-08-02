@@ -27,8 +27,7 @@ Do not edit `README.md` manually, instead edit `docs/README.template.md` and run
 pip install pydantic-typer
 ```
 
-> [!NOTE]
-> `pydantic-typer` comes with `pydantic` and `typer` as dependencies, so you don't need to install anything else.
+> [!NOTE] > `pydantic-typer` comes with `pydantic` and `typer` as dependencies, so you don't need to install anything else.
 
 ## Usage
 
@@ -76,6 +75,12 @@ Here, `User` is a `typer.Argument`, but we manually override the fields again:
 For larger `typer` apps, you can use `pydantic_typer.PydanticTyper` instead of annotating each command function individually to enable pydantic models on all commands:
 
 {example_005_multi_commands}
+
+### Use pydantic types
+
+You can also annotate arguments with [pydantic types](https://docs.pydantic.dev/latest/concepts/types/) and they will be validated:
+
+{example_006_pydantic_types}
 
 ## License
 

@@ -27,8 +27,7 @@ Do not edit `README.md` manually, instead edit `docs/README.template.md` and run
 pip install pydantic-typer
 ```
 
-> [!NOTE]
-> `pydantic-typer` comes with `pydantic` and `typer` as dependencies, so you don't need to install anything else.
+> [!NOTE] > `pydantic-typer` comes with `pydantic` and `typer` as dependencies, so you don't need to install anything else.
 
 ## Usage
 
@@ -199,6 +198,30 @@ def bye(user: User):
 
 if __name__ == "__main__":
     app()
+```
+
+### Use pydantic types
+
+You can also annotate arguments with [pydantic types](https://docs.pydantic.dev/latest/concepts/types/) and they will be validated:
+
+```python
+import click
+import typer
+from pydantic import HttpUrl, conint
+
+from pydantic_typer import enable_pydantic_type_validation
+
+EvenInt = conint(multiple_of=2)
+
+
+@enable_pydantic_type_validation
+def main(num: EvenInt, url: HttpUrl, ctx: click.Context):  # type: ignore
+    print(num, type(num))
+    print(url, type(url))
+
+
+if __name__ == "__main__":
+    typer.run(main)
 ```
 
 ## License
