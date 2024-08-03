@@ -18,6 +18,8 @@ jobs:
         uses: pypa/hatch@install
       - name: Lint
         run: hatch run dev:check
+      - name: Run typer testsuite
+        run: ./scripts/run_regression_tests.sh
       - name: Test & Coverage
         run: |
           hatch test --cover \
@@ -28,6 +30,3 @@ jobs:
           SMOKESHOW_GITHUB_STATUS_DESCRIPTION: Coverage {coverage-percentage}
           SMOKESHOW_GITHUB_COVERAGE_THRESHOLD: 100
           SMOKESHOW_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Regression tests
-        if: always()
-        run: ./scripts/run_regression_tests.sh
