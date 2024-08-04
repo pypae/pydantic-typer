@@ -55,6 +55,10 @@ python = ["3.12", "3.11", "3.10", "3.9", "3.8"]
 default-args = [""]
 parallel = true
 
+[tool.hatch.envs.hatch-test.env-vars]
+TERMINAL_WIDTH = "3000"
+_TYPER_FORCE_DISABLE_TERMINAL = "1"
+
 [tool.hatch.envs.hatch-static-analysis]
 config-path = "ruff_defaults.toml"
 
