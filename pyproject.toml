@@ -46,7 +46,7 @@ extra-dependencies = [
 ]
 
 [tool.hatch.envs.dev.scripts]
-check = "mypy --install-types --non-interactive {args:src/pydantic_typer tests}"
+check = "mypy --install-types --non-interactive {args:src/pydantic_typer unit_tests}"
 
 [[tool.hatch.envs.hatch-test.matrix]]
 python = ["3.12", "3.11", "3.10", "3.9", "3.8"]
