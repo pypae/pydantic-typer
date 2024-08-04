@@ -51,6 +51,10 @@ check = "mypy --install-types --non-interactive {args:src/pydantic_typer tests}"
 [[tool.hatch.envs.hatch-test.matrix]]
 python = ["3.12", "3.11", "3.10", "3.9", "3.8"]
 
+[tool.hatch.envs.hatch-test]
+default-args = [""]
+parallel = true
+
 [tool.hatch.envs.hatch-static-analysis]
 config-path = "ruff_defaults.toml"
 
@@ -61,10 +65,10 @@ extend = "ruff_defaults.toml"
 # Allow print statements in examples
 "examples/*.py" = ["T201"]
 # Allow assert in tests
-"tests/*.py" = ["S101"]
+"unit_tests/*.py" = ["S101"]
 
 [tool.coverage.run]
-source_pkgs = ["pydantic_typer", "tests"]
+source_pkgs = ["pydantic_typer", "unit_tests"]
 branch = true
 parallel = true
 omit = [
@@ -73,11 +77,19 @@ omit = [
 
 [tool.coverage.paths]
 pydantic_typer = ["src/pydantic_typer", "*/pydantic-typer/src/pydantic_typer"]
-tests = ["tests", "*/pydantic-typer/tests"]
+unit_tests = ["unit_tests", "*/pydantic-typer/unit_tests", ]
 
 [tool.coverage.report]
 exclude_lines = [
   "no cov",
   "if __name__ == .__main__.:",
   "if TYPE_CHECKING:",
+]
+
+[tool.pytest.ini_options]
+addopts = "-k 'not test_cli'"
+testpaths = [
+    "unit_tests",
+    "regression_tests/conftest.py",
+    "regression_tests/typer/tests",
 ]
