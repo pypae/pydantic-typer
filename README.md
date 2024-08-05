@@ -201,7 +201,6 @@ You can also annotate arguments with [pydantic types](https://docs.pydantic.dev/
 
 ```python
 import click
-import typer
 from pydantic import HttpUrl, conint
 
 import pydantic_typer
@@ -212,6 +211,25 @@ EvenInt = conint(multiple_of=2)
 def main(num: EvenInt, url: HttpUrl, ctx: click.Context):  # type: ignore
     print(num, type(num))
     print(url, type(url))
+
+
+if __name__ == "__main__":
+    pydantic_typer.run(main)
+```
+
+Pydantic types also work in lists and tuples:
+
+```python
+from typing import List
+
+import typer
+from pydantic import AnyHttpUrl
+
+import pydantic_typer
+
+
+def main(urls: List[AnyHttpUrl] = typer.Option([], "--url")):
+    typer.echo(f"urls: {urls}")
 
 
 if __name__ == "__main__":

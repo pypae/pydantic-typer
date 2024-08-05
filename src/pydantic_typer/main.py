@@ -111,17 +111,16 @@ def _recursive_replace_annotation(original_annotation, type_to_replace, replacem
     if original_annotation == type_to_replace:
         return replacement
     if hasattr(original_annotation, "__origin__"):
-        # This is a pydantic type with extra information, such as:
-        # typing.Annotated[pydantic_core._pydantic_core.Url, UrlConstraints(max_length=2083, allowed_schemes=['http', 'https'], host_required=None, default_host=None, default_port=None, default_path=None)]
         if original_annotation.__origin__ == type_to_replace:
+            # This is a pydantic type with extra information, such as:
+            # typing.Annotated[pydantic_core._pydantic_core.Url, UrlConstraints(max_length=2083, allowed_schemes=['http', 'https'], host_required=None, default_host=None, default_port=None, default_path=None)]
             return replacement
-
         if hasattr(original_annotation, "__args__") and hasattr(original_annotation.__origin__, "__getitem__"):
+            # This is probably a list or tuple. Replace the error type inside the list/tuple.
             args = tuple(
                 _recursive_replace_annotation(arg, type_to_replace, replacement) for arg in original_annotation.__args__
             )
             return original_annotation.__origin__[args]
-    print("3")
     return original_annotation
 
 

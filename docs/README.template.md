@@ -83,6 +83,10 @@ You can also annotate arguments with [pydantic types](https://docs.pydantic.dev/
 
 {pydantic_types/example_006_pydantic_types}
 
+Pydantic types also work in lists and tuples:
+
+{pydantic_types/example_007_list_pydantic_types}
+
 ## License
 
 `pydantic-typer` is distributed under the terms of the [MIT](https://spdx.org/licenses/MIT.html) license.
