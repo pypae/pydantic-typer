@@ -1,5 +1,4 @@
 import click
-import typer
 from pydantic import HttpUrl, conint
 
 import pydantic_typer

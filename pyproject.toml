@@ -92,7 +92,7 @@ exclude_lines = [
 show_missing = "true"
 
 [tool.pytest.ini_options]
-# cli and completion tests don't work as expected (Because we run coverage on a different module?)
+# Some cli and completion tests don't work as expected (Because we run coverage on a different module?)
 addopts = "-k 'not test_cli and not test_completion'"
 testpaths = [
     "unit_tests",

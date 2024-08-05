@@ -3,11 +3,14 @@ import sys
 
 from typer.testing import CliRunner
 
-from examples import example_005_multi_commands as mod
+import pydantic_typer
+from examples.pydantic_models import example_004_argument_override as mod
 
 runner = CliRunner()
 
-app = mod.app
+
+app = pydantic_typer.Typer()
+app.command()(mod.main)
 
 
 def test_help():
@@ -15,11 +18,10 @@ def test_help():
     assert result.exit_code == 0
 
 
-def test_all_commands():
-    result = runner.invoke(app, ["hi", "--user.id", "1"])
-    assert "Hi id=1 name='John'" in result.output
-    result = runner.invoke(app, ["bye", "--user.id", "1"])
-    assert "Bye id=1 name='John'" in result.output
+def test_parse_pydantic_model():
+    result = runner.invoke(app, '--num 1 2 --user.name "John Doe"')
+    assert "1 <class 'int'>" in result.output
+    assert "id=2 name='John Doe' <class 'examples.pydantic_models.example_004_argument_override.User'>" in result.output
 
 
 def test_script():

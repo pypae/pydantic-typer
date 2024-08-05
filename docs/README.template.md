@@ -45,24 +45,24 @@ python main.py
 
 Simply use `pydantic_typer.run` instead of `typer.run` to enable pydantic support:
 
-{example_001_basic}
+{pydantic_models/example_001_basic}
 
 ### Usage with nested models
 
 `pydantic_typer.run` also works with nested pydantic models:
 
-{example_002_nested_models}
+{pydantic_models/example_002_nested_models}
 
 ### Use `pydantic` models with `typer.Argument`
 
 You can annotate the parameters with `typer.Argument` to make all model fields CLI arguments:
 
-{example_003_annotated_argument}
+{pydantic_models/example_003_annotated_argument}
 
 <details>
 <summary>:bulb: You can also override annotations directly on the pydantic model fields:</summary>
 
-{example_004_argument_override}
+{pydantic_models/example_004_argument_override}
 
 Here, `User` is a `typer.Argument`, but we manually override the fields again:
 
@@ -75,13 +75,13 @@ Here, `User` is a `typer.Argument`, but we manually override the fields again:
 
 For larger `typer` apps, you can use `pydantic_typer.Typer` instead of annotating each command function individually to enable pydantic models on all commands:
 
-{example_005_multi_commands}
+{pydantic_models/example_005_multi_commands}
 
 ### Use pydantic types
 
 You can also annotate arguments with [pydantic types](https://docs.pydantic.dev/latest/concepts/types/) and they will be validated:
 
-{example_006_pydantic_types}
+{pydantic_types/example_006_pydantic_types}
 
 ## License
 

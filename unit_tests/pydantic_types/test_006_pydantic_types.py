@@ -4,7 +4,7 @@ import sys
 from typer.testing import CliRunner
 
 import pydantic_typer
-from examples import example_002_nested_models as mod
+from examples.pydantic_types import example_006_pydantic_types as mod
 
 runner = CliRunner()
 
@@ -17,22 +17,15 @@ def test_help():
     assert result.exit_code == 0
 
 
-def test_parse_pydantic_model():
-    result = runner.invoke(
-        app,
-        [
-            "--person.name",
-            "Jeff",
-            "--person.pet.name",
-            "Lassie",
-            "--person.pet.species",
-            "dog",
-        ],
-    )
-    assert (
-        "name='Jeff' age=None pet=Pet(name='Lassie', species='dog') <class 'examples.example_002_nested_models.Person'>"
-        in result.output
-    )
+def test_valid_input():
+    result = runner.invoke(app, ["2", "https://google.com"])
+    assert "2 <class 'int'>" in result.output
+    assert "https://google.com/ <class 'pydantic_core._pydantic_core.Url'>" in result.output
+
+
+def test_invalid_url():
+    result = runner.invoke(app, ["2", "ftp://ftp.google.com"])
+    assert "Invalid value for url: URL scheme should be 'http' or 'https'" in result.output
 
 
 def test_script():

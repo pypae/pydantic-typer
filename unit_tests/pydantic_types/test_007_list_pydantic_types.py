@@ -4,7 +4,7 @@ import sys
 from typer.testing import CliRunner
 
 import pydantic_typer
-from examples import example_004_argument_override as mod
+from examples.pydantic_types import example_007_list_pydantic_types as mod
 
 runner = CliRunner()
 
@@ -17,10 +17,14 @@ def test_help():
     assert result.exit_code == 0
 
 
-def test_parse_pydantic_model():
-    result = runner.invoke(app, '--num 1 2 --user.name "John Doe"')
-    assert "1 <class 'int'>" in result.output
-    assert "id=2 name='John Doe' <class 'examples.example_004_argument_override.User'>" in result.output
+def test_valid_input():
+    result = runner.invoke(app, ["--url", "https://google.com", "--url", "http://facebook.com"])
+    assert "https://google.com/" in result.output
+
+
+def test_invalid_url():
+    result = runner.invoke(app, ["--url", "ftp://ftp.google.com"])
+    assert "Invalid value for urls: URL scheme should be 'http' or 'https'" in result.output
 
 
 def test_script():

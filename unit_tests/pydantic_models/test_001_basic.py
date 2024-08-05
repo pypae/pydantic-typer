@@ -4,7 +4,7 @@ import sys
 from typer.testing import CliRunner
 
 import pydantic_typer
-from examples import example_001_basic as mod
+from examples.pydantic_models import example_001_basic as mod
 
 runner = CliRunner()
 
@@ -20,7 +20,7 @@ def test_help():
 def test_parse_pydantic_model():
     result = runner.invoke(app, ["1", "--user.id", "2", "--user.name", "John Doe"])
     assert "1 <class 'int'>" in result.output
-    assert "id=2 name='John Doe' <class 'examples.example_001_basic.User'>" in result.output
+    assert "id=2 name='John Doe' <class 'examples.pydantic_models.example_001_basic.User'>" in result.output
 
 
 def test_script():

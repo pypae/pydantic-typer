@@ -4,7 +4,7 @@ import sys
 from typer.testing import CliRunner
 
 import pydantic_typer
-from examples import example_003_annotated_argument as mod
+from examples.pydantic_models import example_002_nested_models as mod
 
 runner = CliRunner()
 
@@ -18,15 +18,21 @@ def test_help():
 
 
 def test_parse_pydantic_model():
-    result = runner.invoke(app, '--num 1 2 "John Doe"')
-    assert "1 <class 'int'>" in result.output
-    assert "id=2 name='John Doe' <class 'examples.example_003_annotated_argument.User'>" in result.output
-
-
-def test_wrong_order():
-    result = runner.invoke(app, '--num 1 "John Doe" 2')
-    assert result.exit_code == 2
-    assert "Usage" in result.output
+    result = runner.invoke(
+        app,
+        [
+            "--person.name",
+            "Jeff",
+            "--person.pet.name",
+            "Lassie",
+            "--person.pet.species",
+            "dog",
+        ],
+    )
+    assert (
+        "name='Jeff' age=None pet=Pet(name='Lassie', species='dog') <class 'examples.pydantic_models.example_002_nested_models.Person'>"
+        in result.output
+    )
 
 
 def test_script():
