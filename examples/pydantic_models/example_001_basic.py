@@ -1,5 +1,4 @@
 import pydantic
-import typer
 
 import pydantic_typer
 

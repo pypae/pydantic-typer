@@ -89,7 +89,6 @@ if __name__ == "__main__":
 
 ```python
 import pydantic
-import typer
 
 import pydantic_typer
 
@@ -106,6 +105,56 @@ def main(num: int, user: User):
 
 if __name__ == "__main__":
     pydantic_typer.run(main)
+```
+
+</td>
+</tr>
+
+<tr>
+<td>
+<details>
+  <summary>
+    :notebook: Usage
+  </summary>
+
+```shell
+# Run the basic example:
+$ python main.py
+Usage: example_001_basic.py [OPTIONS] NUM
+Try 'example_001_basic.py --help' for help.
+╭─ Error ────────────────────────────────────────────────────────────╮
+│ Missing argument 'NUM'.                                            │
+╰────────────────────────────────────────────────────────────────────╯
+
+# We're missing a required argument, try using --help as suggested:
+$ python main.py --help
+Usage: example_001_basic.py [OPTIONS] NUM
+
+╭─ Arguments ────────────────────────────────────────────────────────╮
+│ *    num      INTEGER  [default: None] [required]                  │
+╰────────────────────────────────────────────────────────────────────╯
+╭─ Options ──────────────────────────────────────────────────────────╮
+│ *  --user.id          INTEGER  The id of the user. [default: None] │
+│                                [required]                          │
+│    --user.name        TEXT     The name of the user.               │
+│                                [default: Jane Doe]                 │
+│    --help                      Show this message and exit.         │
+╰────────────────────────────────────────────────────────────────────
+
+# Notice the help text for `user.id` and `user.name` are inferred from the `pydantic.Field`.
+# `user.id` is reqired, because we don't provide a default value for the field.
+# Now run the example with the required arguments:
+$ python main.py 1 --user.id 1
+1 <class 'int'>
+id=1 name='Jane Doe' <class '__main__.User'>
+
+# It worked! You can also experiment with an invalid `user.id`:
+$ python main.py 1 --user.id some-string
+Usage: example_001_basic.py [OPTIONS] NUM
+Try 'example_001_basic.py --help' for help.
+╭─ Error ─────────────────────────────────────────────────────────────╮
+│ Invalid value for '--user.id': 'some-string' is not a valid integer.│
+╰─────────────────────────────────────────────────────────────────────╯
 ```
 
 </td>
