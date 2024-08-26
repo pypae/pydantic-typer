@@ -14,6 +14,7 @@ app.command()(mod.main)
 
 def test_help():
     result = runner.invoke(app, ["--help"])
+    assert "The id of the user." in result.output
     assert result.exit_code == 0
 
 
