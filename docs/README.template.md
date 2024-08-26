@@ -75,11 +75,11 @@ Simply use `pydantic_typer.run` instead of `typer.run` to enable pydantic suppor
 <td>
 <details>
   <summary>
-    :notebook: Usage
+    :computer: Usage
   </summary>
 
-```shell
-# Run the basic example:
+```console
+$ # Run the basic example:
 $ python main.py
 Usage: example_001_basic.py [OPTIONS] NUM
 Try 'example_001_basic.py --help' for help.
@@ -87,7 +87,7 @@ Try 'example_001_basic.py --help' for help.
 │ Missing argument 'NUM'.                                            │
 ╰────────────────────────────────────────────────────────────────────╯
 
-# We're missing a required argument, try using --help as suggested:
+$ # We're missing a required argument, try using --help as suggested:
 $ python main.py --help
 Usage: example_001_basic.py [OPTIONS] NUM
 
@@ -102,14 +102,14 @@ Usage: example_001_basic.py [OPTIONS] NUM
 │    --help                      Show this message and exit.         │
 ╰────────────────────────────────────────────────────────────────────
 
-# Notice the help text for `user.id` and `user.name` are inferred from the `pydantic.Field`.
-# `user.id` is reqired, because we don't provide a default value for the field.
-# Now run the example with the required arguments:
+$ # Notice the help text for `user.id` and `user.name` are inferred from the `pydantic.Field`.
+$ # `user.id` is reqired, because we don't provide a default value for the field.
+$ # Now run the example with the required arguments:
 $ python main.py 1 --user.id 1
 1 <class 'int'>
 id=1 name='Jane Doe' <class '__main__.User'>
 
-# It worked! You can also experiment with an invalid `user.id`:
+$ # It worked! You can also experiment with an invalid `user.id`:
 $ python main.py 1 --user.id some-string
 Usage: example_001_basic.py [OPTIONS] NUM
 Try 'example_001_basic.py --help' for help.
