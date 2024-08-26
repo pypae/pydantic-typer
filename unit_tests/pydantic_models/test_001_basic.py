@@ -1,30 +1,40 @@
+import importlib
 import subprocess
 import sys
 
+import pytest
 from typer.testing import CliRunner
 
 import pydantic_typer
-from examples.pydantic_models import example_001_basic as mod
 
 runner = CliRunner()
 
-app = pydantic_typer.Typer()
-app.command()(mod.main)
+
+@pytest.fixture(params=["examples.pydantic_models.example_001_basic", "examples.pydantic_models.example_001_basic_an"])
+def mod(request):
+    return importlib.import_module(request.param)
 
 
-def test_help():
+@pytest.fixture
+def app(mod):
+    app = pydantic_typer.Typer()
+    app.command()(mod.main)
+    return app
+
+
+def test_help(app):
     result = runner.invoke(app, ["--help"])
     assert "The id of the user." in result.output
     assert result.exit_code == 0
 
 
-def test_parse_pydantic_model():
+def test_parse_pydantic_model(mod, app):
     result = runner.invoke(app, ["1", "--user.id", "2", "--user.name", "John Doe"])
     assert "1 <class 'int'>" in result.output
-    assert "id=2 name='John Doe' <class 'examples.pydantic_models.example_001_basic.User'>" in result.output
+    assert f"id=2 name='John Doe' <class '{mod.__name__}.User'>" in result.output
 
 
-def test_script():
+def test_script(mod):
     result = subprocess.run(
         [sys.executable, "-m", "coverage", "run", mod.__file__, "--help"],
         capture_output=True,

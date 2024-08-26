@@ -27,7 +27,7 @@ Do not edit `README.md` manually, instead edit `docs/README.template.md` and run
 pip install pydantic-typer
 ```
 
-> [!NOTE]
+> [!NOTE]  
 > `pydantic-typer` comes with `pydantic` and `typer` as dependencies, so you don't need to install anything else.
 
 ## Usage
@@ -43,9 +43,35 @@ python main.py
 
 ### Basic Usage
 
-Simply use `pydantic_typer.run` instead of `typer.run` to enable pydantic support:
+<table>
+<tr>
+<td>
+
+Simply use `pydantic_typer.run` instead of `typer.run` to enable pydantic support
+
+</td>
+</tr>
+<tr>
+<td>
+
+{pydantic_models/example_001_basic_an}
+
+</td>
+</tr>
+
+<tr>
+<td>
+<details>
+  <summary>
+    :dinosaur: Non-Annotated Version
+  </summary>
 
 {pydantic_models/example_001_basic}
+
+</td>
+</tr>
+
+</table>
 
 ### Usage with nested models
 
