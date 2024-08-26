@@ -63,7 +63,7 @@ Simply use `pydantic_typer.run` instead of `typer.run` to enable pydantic suppor
 <td>
 <details>
   <summary>
-    :dinosaur: Non-Annotated Version
+    :t-rex: Non-Annotated Version
   </summary>
 
 {pydantic_models/example_001_basic}

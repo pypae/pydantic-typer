@@ -84,7 +84,7 @@ if __name__ == "__main__":
 <td>
 <details>
   <summary>
-    :dinosaur: Non-Annotated Version
+    :t-rex: Non-Annotated Version
   </summary>
 
 ```python
