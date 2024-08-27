@@ -81,15 +81,15 @@ python main.py
 ```console
 $ # Run the basic example:
 $ python main.py
-Usage: example_001_basic.py [OPTIONS] NUM
-Try 'example_001_basic.py --help' for help.
+Usage: main.py [OPTIONS] NUM
+Try 'main.py --help' for help.
 ╭─ Error ────────────────────────────────────────────────────────────╮
 │ Missing argument 'NUM'.                                            │
 ╰────────────────────────────────────────────────────────────────────╯
 
 $ # We're missing a required argument, try using --help as suggested:
 $ python main.py --help
-Usage: example_001_basic.py [OPTIONS] NUM
+Usage: main.py [OPTIONS] NUM
 
 ╭─ Arguments ────────────────────────────────────────────────────────╮
 │ *    num      INTEGER  [default: None] [required]                  │
@@ -140,6 +140,22 @@ Try 'example_001_basic.py --help' for help.
 
 </td>
 </tr>
+
+<tr>
+<td>
+<details>
+  <summary>
+    :computer: Usage
+  </summary>
+
+```console
+$ # Run the nested models example with the required options:
+$ python main.py --person.name "Patrick" --person.pet.name "Snoopy" --person.pet.species "Dog"
+name='Patrick' age=None pet=Pet(name='Snoopy', species='Dog') <class '__main__.Person'>
+```
+
+</td>
+</tr>
 </table>
 
 ### Use `pydantic` models with `typer.Argument`
@@ -162,6 +178,33 @@ Try 'example_001_basic.py --help' for help.
 <tr>
 <td>
 
+<tr>
+<td>
+<details>
+  <summary>
+    :computer: Usage
+  </summary>
+
+```console
+$ # Run the example
+$ python main.py
+Usage: main.py [OPTIONS] _PYDANTIC_USER_ID
+                                         _PYDANTIC_USER_NAME
+Try 'main.py --help' for help.
+╭─ Error ─────────────────────────────────────────────────────────────╮
+│ Missing argument '_PYDANTIC_USER_ID'.                               │
+╰─────────────────────────────────────────────────────────────────────╯
+
+$ # Notice how _PYDANTIC_USER_ID and _PYDANTIC_USER_NAME are now cli arguments instead of options.
+$ # Supply the arguments in the right order:
+> python main.py 1 Patrick --num 1
+1 <class 'int'>
+id=1 name='Patrick' <class '__main__.User'>
+```
+
+</td>
+</tr>
+
 <details>
 <summary>:bulb: You can also override annotations directly on the pydantic model fields:</summary>
 
@@ -182,6 +225,7 @@ Here, `User` is a `typer.Argument`, but we manually override the fields again:
 <table>
 <tr>
 <td>
+
 :technologist: For larger `typer` apps, you can use `pydantic_typer.Typer` instead of annotating each command function individually to enable pydantic models on all commands
 
 </td>
@@ -230,6 +274,14 @@ Here, `User` is a `typer.Argument`, but we manually override the fields again:
 </td>
 </tr>
 </table>
+
+### Limitations
+
+> [!WARNING]  
+> `pydantic-typer` does not yet support sequences of pydantic models: See [this issue](https://github.com/pypae/pydantic-typer/issues/6) for details
+
+> [!WARNING]  
+> `pydantic-typer` does not yet support self-referential pydantic models.
 
 ## License
 
