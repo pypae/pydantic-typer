@@ -16,11 +16,11 @@ class Pet(pydantic.BaseModel):
 class Person(pydantic.BaseModel):
     name: str
     age: Optional[float] = None  # noqa: UP007 For Python versions >=3.10, prefer float | None
-    pet: Pet
+    pets: list[Pet]
 
 
-def main(person: Person):
-    typer.echo(f"{person} {type(person)}")
+def main(persons: list[Person]):
+    typer.echo(f"{persons} {type(persons)}")
 
 
 if __name__ == "__main__":

@@ -58,6 +58,7 @@ python main.py
 from typing import Annotated
 
 import pydantic
+import typer
 
 import pydantic_typer
 
@@ -68,8 +69,8 @@ class User(pydantic.BaseModel):
 
 
 def main(num: int, user: User):
-    print(num, type(num))
-    print(user, type(user))
+    typer.echo(f"{num} {type(num)}")
+    typer.echo(f"{user} {type(user)}")
 
 
 if __name__ == "__main__":
@@ -88,6 +89,7 @@ if __name__ == "__main__":
 
 ```python
 import pydantic
+import typer
 
 import pydantic_typer
 
@@ -98,8 +100,8 @@ class User(pydantic.BaseModel):
 
 
 def main(num: int, user: User):
-    print(num, type(num))
-    print(user, type(user))
+    typer.echo(f"{num} {type(num)}")
+    typer.echo(f"{user} {type(user)}")
 
 
 if __name__ == "__main__":
@@ -119,15 +121,15 @@ if __name__ == "__main__":
 ```console
 $ # Run the basic example:
 $ python main.py
-Usage: example_001_basic.py [OPTIONS] NUM
-Try 'example_001_basic.py --help' for help.
+Usage: main.py [OPTIONS] NUM
+Try 'main.py --help' for help.
 ╭─ Error ────────────────────────────────────────────────────────────╮
 │ Missing argument 'NUM'.                                            │
 ╰────────────────────────────────────────────────────────────────────╯
 
 $ # We're missing a required argument, try using --help as suggested:
 $ python main.py --help
-Usage: example_001_basic.py [OPTIONS] NUM
+Usage: main.py [OPTIONS] NUM
 
 ╭─ Arguments ────────────────────────────────────────────────────────╮
 │ *    num      INTEGER  [default: None] [required]                  │
@@ -180,6 +182,7 @@ from __future__ import annotations
 from typing import Optional
 
 import pydantic
+import typer
 
 import pydantic_typer
 
@@ -196,11 +199,27 @@ class Person(pydantic.BaseModel):
 
 
 def main(person: Person):
-    print(person, type(person))
+    typer.echo(f"{person} {type(person)}")
 
 
 if __name__ == "__main__":
     pydantic_typer.run(main)
+```
+
+</td>
+</tr>
+
+<tr>
+<td>
+<details>
+  <summary>
+    :computer: Usage
+  </summary>
+
+```console
+$ # Run the nested models example with the required options:
+$ python main.py --person.name "Patrick" --person.pet.name "Snoopy" --person.pet.species "Dog"
+name='Patrick' age=None pet=Pet(name='Snoopy', species='Dog') <class '__main__.Person'>
 ```
 
 </td>
@@ -236,12 +255,38 @@ class User(pydantic.BaseModel):
 
 
 def main(num: Annotated[int, typer.Option()], user: Annotated[User, typer.Argument()]):
-    print(num, type(num))
-    print(user, type(user))
+    typer.echo(f"{num} {type(num)}")
+    typer.echo(f"{user} {type(user)}")
 
 
 if __name__ == "__main__":
     pydantic_typer.run(main)
+```
+
+</td>
+</tr>
+<tr>
+<td>
+<details>
+  <summary>
+    :computer: Usage
+  </summary>
+
+```console
+$ # Run the example
+$ python main.py
+Usage: main.py [OPTIONS] _PYDANTIC_USER_ID
+                                         _PYDANTIC_USER_NAME
+Try 'main.py --help' for help.
+╭─ Error ─────────────────────────────────────────────────────────────╮
+│ Missing argument '_PYDANTIC_USER_ID'.                               │
+╰─────────────────────────────────────────────────────────────────────╯
+
+$ # Notice how _PYDANTIC_USER_ID and _PYDANTIC_USER_NAME are now cli arguments instead of options.
+$ # Supply the arguments in the right order:
+> python main.py 1 Patrick --num 1
+1 <class 'int'>
+id=1 name='Patrick' <class '__main__.User'>
 ```
 
 </td>
@@ -268,8 +313,8 @@ class User(pydantic.BaseModel):
 
 
 def main(num: Annotated[int, typer.Option()], user: Annotated[User, typer.Argument()]):
-    print(num, type(num))
-    print(user, type(user))
+    typer.echo(f"{num} {type(num)}")
+    typer.echo(f"{user} {type(user)}")
 
 
 if __name__ == "__main__":
@@ -291,6 +336,7 @@ Here, `User` is a `typer.Argument`, but we manually override the fields again:
 <table>
 <tr>
 <td>
+
 :technologist: For larger `typer` apps, you can use `pydantic_typer.Typer` instead of annotating each command function individually to enable pydantic models on all commands
 
 </td>
@@ -317,12 +363,12 @@ class User(pydantic.BaseModel):
 
 @app.command()
 def hi(user: User):
-    print(f"Hi {user}")
+    typer.echo(f"Hi {user}")
 
 
 @app.command()
 def bye(user: User):
-    print(f"Bye {user}")
+    typer.echo(f"Bye {user}")
 
 
 if __name__ == "__main__":
@@ -348,6 +394,7 @@ if __name__ == "__main__":
 
 ```python
 import click
+import typer
 from pydantic import HttpUrl, conint
 
 import pydantic_typer
@@ -356,8 +403,8 @@ EvenInt = conint(multiple_of=2)
 
 
 def main(num: EvenInt, url: HttpUrl, ctx: click.Context):  # type: ignore
-    print(num, type(num))
-    print(url, type(url))
+    typer.echo(f"{num} {type(num)}")
+    typer.echo(f"{url} {type(url)}")
 
 
 if __name__ == "__main__":
@@ -399,6 +446,14 @@ if __name__ == "__main__":
 </td>
 </tr>
 </table>
+
+### Limitations
+
+> [!WARNING]  
+> `pydantic-typer` does not yet support sequences of pydantic models: See [this issue](https://github.com/pypae/pydantic-typer/issues/6) for details
+
+> [!WARNING]  
+> `pydantic-typer` does not yet support self-referential pydantic models.
 
 ## License
 

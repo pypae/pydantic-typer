@@ -16,12 +16,12 @@ class User(pydantic.BaseModel):
 
 @app.command()
 def hi(user: User):
-    print(f"Hi {user}")
+    typer.echo(f"Hi {user}")
 
 
 @app.command()
 def bye(user: User):
-    print(f"Bye {user}")
+    typer.echo(f"Bye {user}")
 
 
 if __name__ == "__main__":
