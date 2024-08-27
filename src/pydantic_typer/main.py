@@ -4,7 +4,7 @@ import importlib
 import inspect
 import re
 from functools import wraps
-from typing import Any, Callable
+from typing import Any, Callable, get_args, get_origin
 
 import click
 import pydantic
@@ -116,25 +116,22 @@ def enable_pydantic(callback: CommandFunctionType) -> CommandFunctionType:
 def _recursive_replace_annotation(original_annotation, type_to_replace, replacement):
     if original_annotation == type_to_replace:
         return replacement
-    if hasattr(original_annotation, "__origin__"):
-        if original_annotation.__origin__ == type_to_replace:
-            # This is a pydantic type with extra information, such as:
-            # typing.Annotated[pydantic_core._pydantic_core.Url, UrlConstraints(max_length=2083, allowed_schemes=['http', 'https'], host_required=None, default_host=None, default_port=None, default_path=None)]
-            return replacement
-        if hasattr(original_annotation, "__args__") and hasattr(original_annotation.__origin__, "__getitem__"):
-            # This is probably a list or tuple. Replace the error type inside the list/tuple.
-            args = tuple(
-                _recursive_replace_annotation(arg, type_to_replace, replacement) for arg in original_annotation.__args__
-            )
-            return original_annotation.__origin__[args]
+
+    origin = get_origin(original_annotation)
+    if origin == type_to_replace:
+        # This is a pydantic type with extra information, such as:
+        # typing.Annotated[pydantic_core._pydantic_core.Url, UrlConstraints(max_length=2083, allowed_schemes=['http', 'https'], host_required=None, default_host=None, default_port=None, default_path=None)]
+        return replacement
+    if origin in (Annotated, tuple, list):
+        # This is probably a list or tuple. Replace the error type inside the list/tuple.
+        args = get_args(original_annotation)
+        args = tuple(_recursive_replace_annotation(arg, type_to_replace, replacement) for arg in args)
+        return origin[args]
     return original_annotation
 
 
 def _parse_error_type(error_message: str) -> type | None:
     match = re.search(r"<class '(.+?)'>", error_message)
-    if not match:
-        return None
-
     type_string = match.group(1)
     module_path, class_name = type_string.rsplit(".", 1)
     module = importlib.import_module(module_path)

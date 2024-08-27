@@ -1,6 +1,7 @@
-import pydantic_typer
 import pytest
 import typer
+
+import pydantic_typer
 
 
 @pytest.fixture(autouse=True)

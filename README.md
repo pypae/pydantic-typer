@@ -191,7 +191,7 @@ class Pet(pydantic.BaseModel):
 
 class Person(pydantic.BaseModel):
     name: str
-    age: Optional[float] = None  # noqa: UP007 typer does not support float | None yet, see https://github.com/tiangolo/typer/pull/548
+    age: Optional[float] = None  # noqa: UP007 For Python versions >=3.10, prefer float | None
     pet: Pet
 
 
