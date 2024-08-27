@@ -1,7 +1,6 @@
 from typing import Annotated
 
 import pydantic
-import typer
 
 import pydantic_typer
 
