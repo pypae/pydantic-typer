@@ -47,7 +47,7 @@ python main.py
 <tr>
 <td>
 
-Simply use `pydantic_typer.run` instead of `typer.run` to enable pydantic support
+:technologist: Simply use `pydantic_typer.run` instead of `typer.run` to enable pydantic support
 
 </td>
 </tr>
@@ -58,7 +58,6 @@ Simply use `pydantic_typer.run` instead of `typer.run` to enable pydantic suppor
 from typing import Annotated
 
 import pydantic
-import typer
 
 import pydantic_typer
 
@@ -164,7 +163,16 @@ Try 'example_001_basic.py --help' for help.
 
 ### Usage with nested models
 
-`pydantic_typer.run` also works with nested pydantic models:
+<table>
+<tr>
+<td>
+
+:technologist: `pydantic_typer.run` also works with nested pydantic models
+
+</td>
+</tr>
+<tr>
+<td>
 
 ```python
 from __future__ import annotations
@@ -195,9 +203,22 @@ if __name__ == "__main__":
     pydantic_typer.run(main)
 ```
 
+</td>
+</tr>
+</table>
+
 ### Use `pydantic` models with `typer.Argument`
 
-You can annotate the parameters with `typer.Argument` to make all model fields CLI arguments:
+<table>
+<tr>
+<td>
+
+:technologist: You can annotate the parameters with `typer.Argument` to make all model fields CLI arguments
+
+</td>
+</tr>
+<tr>
+<td>
 
 ```python
 from __future__ import annotations
@@ -256,10 +277,21 @@ Here, `User` is a `typer.Argument`, but we manually override the fields again:
 - And `User.name` to be a `typer.Option`
 
 </details>
+</td>
+</tr>
+</table>
 
 ### Use pydantic models in multiple commands
 
-For larger `typer` apps, you can use `pydantic_typer.Typer` instead of annotating each command function individually to enable pydantic models on all commands:
+<table>
+<tr>
+<td>
+:technologist: For larger `typer` apps, you can use `pydantic_typer.Typer` instead of annotating each command function individually to enable pydantic models on all commands
+
+</td>
+</tr>
+<tr>
+<td>
 
 ```python
 from __future__ import annotations
@@ -292,9 +324,22 @@ if __name__ == "__main__":
     app()
 ```
 
+</td>
+</tr>
+</table>
+
 ### Use pydantic types
 
-You can also annotate arguments with [pydantic types](https://docs.pydantic.dev/latest/concepts/types/) and they will be validated:
+<table>
+<tr>
+<td>
+
+:technologist: You can also annotate arguments with [pydantic types](https://docs.pydantic.dev/latest/concepts/types/) and they will be validated
+
+</td>
+</tr>
+<tr>
+<td>
 
 ```python
 import click
@@ -314,7 +359,20 @@ if __name__ == "__main__":
     pydantic_typer.run(main)
 ```
 
-Pydantic types also work in lists and tuples:
+</td>
+</tr>
+</table>
+
+<table>
+<tr>
+<td>
+
+:technologist: Pydantic types also work in lists and tuples
+
+</td>
+</tr>
+<tr>
+<td>
 
 ```python
 from typing import List
@@ -333,6 +391,9 @@ if __name__ == "__main__":
     pydantic_typer.run(main)
 ```
 
+</td>
+</tr>
+</table>
 ## License
 
 `pydantic-typer` is distributed under the terms of the [MIT](https://spdx.org/licenses/MIT.html) license.
