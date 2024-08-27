@@ -267,9 +267,6 @@ if __name__ == "__main__":
 </tr>
 <tr>
 <td>
-
-<tr>
-<td>
 <details>
   <summary>
     :computer: Usage
@@ -294,6 +291,8 @@ id=1 name='Patrick' <class '__main__.User'>
 
 </td>
 </tr>
+<tr>
+<td>
 
 <details>
 <summary>:bulb: You can also override annotations directly on the pydantic model fields:</summary>

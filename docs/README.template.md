@@ -177,9 +177,6 @@ name='Patrick' age=None pet=Pet(name='Snoopy', species='Dog') <class '__main__.P
 </tr>
 <tr>
 <td>
-
-<tr>
-<td>
 <details>
   <summary>
     :computer: Usage
@@ -204,6 +201,8 @@ id=1 name='Patrick' <class '__main__.User'>
 
 </td>
 </tr>
+<tr>
+<td>
 
 <details>
 <summary>:bulb: You can also override annotations directly on the pydantic model fields:</summary>
