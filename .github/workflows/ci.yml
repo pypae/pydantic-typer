@@ -7,6 +7,7 @@ on:
   push:
     branches:
       - main
+  pull_request:
 
 jobs:
   run:
@@ -16,15 +17,20 @@ jobs:
         uses: actions/checkout@v4
         with:
           submodules: "true"
+
       - name: Install Hatch
         uses: pypa/hatch@install
+
       - name: Lint
         run: hatch run dev:check
+
       - name: Test & Coverage
         run: |
           hatch test --cover \
           && hatch run dev:coverage html
+
       - name: Publish coverage report
+        if: github.ref == 'refs/heads/main'
         run: hatch run dev:smokeshow upload htmlcov
         env:
           SMOKESHOW_GITHUB_STATUS_DESCRIPTION: Coverage {coverage-percentage}
