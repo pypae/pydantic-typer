@@ -52,7 +52,12 @@ def _flatten_pydantic_model(
             elif ancestor_typer_param:
                 typer_param = ancestor_typer_param
             else:
-                typer_param = Option(f"--{PYDANTIC_FIELD_SEPARATOR.join(qualifier)}")
+                typer_param: OptionInfo = Option(f"--{PYDANTIC_FIELD_SEPARATOR.join(qualifier)}")
+
+            # Copy Field metadata to Option, fixes https://github.com/pypae/pydantic-typer/issues/2
+            if field.description and not typer_param.help:
+                typer_param.help = field.description
+
             pydantic_parameters[sub_name] = inspect.Parameter(
                 sub_name,
                 inspect.Parameter.KEYWORD_ONLY,

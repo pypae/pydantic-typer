@@ -27,7 +27,7 @@ Do not edit `README.md` manually, instead edit `docs/README.template.md` and run
 pip install pydantic-typer
 ```
 
-> [!NOTE]
+> [!NOTE]  
 > `pydantic-typer` comes with `pydantic` and `typer` as dependencies, so you don't need to install anything else.
 
 ## Usage
@@ -43,19 +43,117 @@ python main.py
 
 ### Basic Usage
 
-Simply use `pydantic_typer.run` instead of `typer.run` to enable pydantic support:
+<table>
+<tr>
+<td>
+
+:technologist: Simply use `pydantic_typer.run` instead of `typer.run` to enable pydantic support
+
+</td>
+</tr>
+<tr>
+<td>
+
+{pydantic_models/example_001_basic_an}
+
+</td>
+</tr>
+
+<tr>
+<td>
+<details>
+  <summary>
+    :t-rex: Non-Annotated Version
+  </summary>
 
 {pydantic_models/example_001_basic}
 
+</td>
+</tr>
+
+<tr>
+<td>
+<details>
+  <summary>
+    :computer: Usage
+  </summary>
+
+```console
+$ # Run the basic example:
+$ python main.py
+Usage: example_001_basic.py [OPTIONS] NUM
+Try 'example_001_basic.py --help' for help.
+╭─ Error ────────────────────────────────────────────────────────────╮
+│ Missing argument 'NUM'.                                            │
+╰────────────────────────────────────────────────────────────────────╯
+
+$ # We're missing a required argument, try using --help as suggested:
+$ python main.py --help
+Usage: example_001_basic.py [OPTIONS] NUM
+
+╭─ Arguments ────────────────────────────────────────────────────────╮
+│ *    num      INTEGER  [default: None] [required]                  │
+╰────────────────────────────────────────────────────────────────────╯
+╭─ Options ──────────────────────────────────────────────────────────╮
+│ *  --user.id          INTEGER  The id of the user. [default: None] │
+│                                [required]                          │
+│    --user.name        TEXT     The name of the user.               │
+│                                [default: Jane Doe]                 │
+│    --help                      Show this message and exit.         │
+╰────────────────────────────────────────────────────────────────────
+
+$ # Notice the help text for `user.id` and `user.name` are inferred from the `pydantic.Field`.
+$ # `user.id` is reqired, because we don't provide a default value for the field.
+$ # Now run the example with the required arguments:
+$ python main.py 1 --user.id 1
+1 <class 'int'>
+id=1 name='Jane Doe' <class '__main__.User'>
+
+$ # It worked! You can also experiment with an invalid `user.id`:
+$ python main.py 1 --user.id some-string
+Usage: example_001_basic.py [OPTIONS] NUM
+Try 'example_001_basic.py --help' for help.
+╭─ Error ─────────────────────────────────────────────────────────────╮
+│ Invalid value for '--user.id': 'some-string' is not a valid integer.│
+╰─────────────────────────────────────────────────────────────────────╯
+```
+
+</td>
+</tr>
+
+</table>
+
 ### Usage with nested models
 
-`pydantic_typer.run` also works with nested pydantic models:
+<table>
+<tr>
+<td>
+
+:technologist: `pydantic_typer.run` also works with nested pydantic models
+
+</td>
+</tr>
+<tr>
+<td>
 
 {pydantic_models/example_002_nested_models}
 
+</td>
+</tr>
+</table>
+
 ### Use `pydantic` models with `typer.Argument`
 
-You can annotate the parameters with `typer.Argument` to make all model fields CLI arguments:
+<table>
+<tr>
+<td>
+
+:technologist: You can annotate the parameters with `typer.Argument` to make all model fields CLI arguments
+
+</td>
+</tr>
+<tr>
+<td>
 
 {pydantic_models/example_003_annotated_argument}
 
@@ -70,23 +168,63 @@ Here, `User` is a `typer.Argument`, but we manually override the fields again:
 - And `User.name` to be a `typer.Option`
 
 </details>
+</td>
+</tr>
+</table>
 
 ### Use pydantic models in multiple commands
 
-For larger `typer` apps, you can use `pydantic_typer.Typer` instead of annotating each command function individually to enable pydantic models on all commands:
+<table>
+<tr>
+<td>
+:technologist: For larger `typer` apps, you can use `pydantic_typer.Typer` instead of annotating each command function individually to enable pydantic models on all commands
+
+</td>
+</tr>
+<tr>
+<td>
 
 {pydantic_models/example_005_multi_commands}
 
+</td>
+</tr>
+</table>
+
 ### Use pydantic types
 
-You can also annotate arguments with [pydantic types](https://docs.pydantic.dev/latest/concepts/types/) and they will be validated:
+<table>
+<tr>
+<td>
+
+:technologist: You can also annotate arguments with [pydantic types](https://docs.pydantic.dev/latest/concepts/types/) and they will be validated
+
+</td>
+</tr>
+<tr>
+<td>
 
 {pydantic_types/example_006_pydantic_types}
 
-Pydantic types also work in lists and tuples:
+</td>
+</tr>
+</table>
+
+<table>
+<tr>
+<td>
+
+:technologist: Pydantic types also work in lists and tuples
+
+</td>
+</tr>
+<tr>
+<td>
 
 {pydantic_types/example_007_list_pydantic_types}
 
+</td>
+</tr>
+</table>
 ## License
 
 `pydantic-typer` is distributed under the terms of the [MIT](https://spdx.org/licenses/MIT.html) license.
