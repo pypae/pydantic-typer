@@ -13,8 +13,8 @@ class User(pydantic.BaseModel):
 
 
 def main(num: Annotated[int, typer.Option()], user: Annotated[User, typer.Argument()]):
-    print(num, type(num))
-    print(user, type(user))
+    typer.echo(f"{num} {type(num)}")
+    typer.echo(f"{user} {type(user)}")
 
 
 if __name__ == "__main__":

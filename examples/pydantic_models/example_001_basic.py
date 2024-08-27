@@ -1,4 +1,5 @@
 import pydantic
+import typer
 
 import pydantic_typer
 
@@ -9,8 +10,8 @@ class User(pydantic.BaseModel):
 
 
 def main(num: int, user: User):
-    print(num, type(num))
-    print(user, type(user))
+    typer.echo(f"{num} {type(num)}")
+    typer.echo(f"{user} {type(user)}")
 
 
 if __name__ == "__main__":

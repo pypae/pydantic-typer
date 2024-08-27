@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import Optional
 
 import pydantic
+import typer
 
 import pydantic_typer
 
@@ -19,7 +20,7 @@ class Person(pydantic.BaseModel):
 
 
 def main(person: Person):
-    print(person, type(person))
+    typer.echo(f"{person} {type(person)}")
 
 
 if __name__ == "__main__":
