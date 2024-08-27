@@ -244,6 +244,11 @@ if __name__ == "__main__":
     pydantic_typer.run(main)
 ```
 
+</td>
+</tr>
+<tr>
+<td>
+
 <details>
 <summary>:bulb: You can also override annotations directly on the pydantic model fields:</summary>
 
@@ -394,6 +399,7 @@ if __name__ == "__main__":
 </td>
 </tr>
 </table>
+
 ## License
 
 `pydantic-typer` is distributed under the terms of the [MIT](https://spdx.org/licenses/MIT.html) license.

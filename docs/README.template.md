@@ -157,6 +157,11 @@ Try 'example_001_basic.py --help' for help.
 
 {pydantic_models/example_003_annotated_argument}
 
+</td>
+</tr>
+<tr>
+<td>
+
 <details>
 <summary>:bulb: You can also override annotations directly on the pydantic model fields:</summary>
 
@@ -225,6 +230,7 @@ Here, `User` is a `typer.Argument`, but we manually override the fields again:
 </td>
 </tr>
 </table>
+
 ## License
 
 `pydantic-typer` is distributed under the terms of the [MIT](https://spdx.org/licenses/MIT.html) license.
