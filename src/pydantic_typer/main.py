@@ -69,6 +69,21 @@ def _flatten_pydantic_model(
 
 
 def enable_pydantic(callback: CommandFunctionType) -> CommandFunctionType:
+    """
+    A decorator that enables the use of Pydantic models as parameters in Typer commands by flattening the model's fields
+    into individual command-line options.
+
+    This decorator inspects the Pydantic model annotations in the function signature and transforms them into a set of
+    individual Typer parameters. The fields of the Pydantic model are flattened into separate parameters, which are then
+    passed into the command-line interface. Nested Pydantic models are also supported, and their fields are appropriately
+    namespaced.
+
+    Args:
+        callback: The original command function to be wrapped.
+
+    Returns:
+        A wrapped function with an extended signature that includes the flattened Pydantic model fields.
+    """
     original_signature = inspect_signature(callback)
 
     pydantic_parameters = {}
@@ -81,6 +96,11 @@ def enable_pydantic(callback: CommandFunctionType) -> CommandFunctionType:
             params = _flatten_pydantic_model(parameter.annotation, [name], typer_param)
             pydantic_parameters.update(params)
             pydantic_roots[name] = base_annotation
+        elif get_origin(base_annotation) in (list, tuple) and any(
+            lenient_issubclass(arg, pydantic.BaseModel) for arg in get_args(base_annotation)
+        ):
+            msg = f"Type not yet supported: {base_annotation}, see https://github.com/pypae/pydantic-typer/issues/6"
+            raise RuntimeError(msg)
         else:
             other_parameters[name] = parameter
 
@@ -125,8 +145,15 @@ def _recursive_replace_annotation(original_annotation, type_to_replace, replacem
     if origin in (Annotated, tuple, list):
         # This is probably a list or tuple. Replace the error type inside the list/tuple.
         args = get_args(original_annotation)
-        args = tuple(_recursive_replace_annotation(arg, type_to_replace, replacement) for arg in args)
-        return origin[args]
+        updated_args = []
+        for arg in args:
+            if lenient_issubclass(arg, pydantic.BaseModel):
+                # lists of pydantic.BaseModels are handled in enable_pydantic,
+                # so we don't need to replace their annotation.
+                updated_args.append(arg)
+            else:
+                updated_args.append(_recursive_replace_annotation(arg, type_to_replace, replacement))
+        return origin[*updated_args]
     return original_annotation
 
 
@@ -142,6 +169,20 @@ def _parse_error_type(error_message: str) -> type | None:
 
 
 def enable_pydantic_type_validation(callback: CommandFunctionType) -> CommandFunctionType:
+    """
+    A decorator that ensures Pydantic validation is applied to parameters of Typer commands, including those with types
+    not natively supported by Typer.
+
+    This decorator modifies the function's signature to replace unsupported types with `str`, allowing them to be
+    parsed and validated by Pydantic at runtime. It ensures that the parameters are validated according to the Pydantic
+    model definitions, raising appropriate errors if validation fails.
+
+    Args:
+        callback: The original command function to be wrapped.
+
+    Returns:
+        A wrapped function that validates its parameters using Pydantic before execution.
+    """
     original_signature = inspect_signature(callback)
     # Change the annotation of unsupported types to str to be parsed by pydantic.
     # Adapted from https://github.com/tiangolo/typer/blob/95b767e38a98ee287a7a0e28176284836e1188c2/typer/main.py#L543
