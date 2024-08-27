@@ -132,6 +132,9 @@ def _recursive_replace_annotation(original_annotation, type_to_replace, replacem
 
 def _parse_error_type(error_message: str) -> type | None:
     match = re.search(r"<class '(.+?)'>", error_message)
+    if not match:
+        return None
+
     type_string = match.group(1)
     module_path, class_name = type_string.rsplit(".", 1)
     module = importlib.import_module(module_path)
