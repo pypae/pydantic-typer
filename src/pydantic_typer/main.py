@@ -44,6 +44,7 @@ def _flatten_pydantic_model(
             # Pydantic stores annotations in field.metadata.
             # If the field is already annotated with a typer.Option or typer.Argument, use that.
             existing_typer_params = [meta for meta in field.metadata if isinstance(meta, ParameterInfo)]
+            typer_param: ParameterInfo
             if existing_typer_params:
                 typer_param = existing_typer_params[0]
                 if isinstance(typer_param, OptionInfo) and not typer_param.param_decls:
@@ -52,7 +53,7 @@ def _flatten_pydantic_model(
             elif ancestor_typer_param:
                 typer_param = ancestor_typer_param
             else:
-                typer_param: OptionInfo = Option(f"--{PYDANTIC_FIELD_SEPARATOR.join(qualifier)}")
+                typer_param = Option(f"--{PYDANTIC_FIELD_SEPARATOR.join(qualifier)}")
 
             # Copy Field metadata to Option, fixes https://github.com/pypae/pydantic-typer/issues/2
             if field.description and not typer_param.help:
