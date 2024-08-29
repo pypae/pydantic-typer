@@ -289,6 +289,7 @@ $ # Supply the arguments in the right order:
 id=1 name='Patrick' <class '__main__.User'>
 ```
 
+</details>
 </td>
 </tr>
 <tr>
@@ -447,6 +448,77 @@ if __name__ == "__main__":
 </tr>
 </table>
 
+### Use `Union` types
+
+<table>
+<tr>
+<td>
+
+:technologist: Thanks to `pydantic.TypeAdapter`, which we use internally, we also support `Union` types
+
+</td>
+</tr>
+<tr>
+<td>
+
+```python
+import typer
+
+import pydantic_typer
+
+
+def main(value: bool | int | float | str = 1):
+    typer.echo(f"{value} {type(value)}")
+
+
+if __name__ == "__main__":
+    pydantic_typer.run(main)
+```
+
+</td>
+</tr>
+<tr>
+<td>
+<details>
+  <summary>
+    :computer: Usage
+  </summary>
+
+```console
+$ # Run the example using a boolean
+$ python main.py --value True
+True <class 'bool'>
+
+$ # Run the example using an integer
+$ python main.py --value 2
+2 <class 'int'>
+
+$ # Run the example using a float
+$ python main.py --value 2.1
+2.1 <class 'float'>
+
+$ # Run the example using a string
+$ python main.py --value "Hello World"
+Hello World <class 'str'>
+
+$ # Before, we intentionally used 2, when testing the integer
+$ # Check what happens if you pass 1
+$ python main.py --value 1
+True <class 'bool'>
+
+$ # We get back a boolean!
+$ # This is because Unions are generally evaluated left to right.
+$ # So in this case bool > int > float > str, if parsing is successful.
+$ # There are some exceptions, where pydantic tries to be smart, see here for details:
+$ # https://docs.pydantic.dev/latest/concepts/unions/#smart-mode
+```
+
+</details>
+</td>
+</tr>
+
+</table>
+
 ### Limitations
 
 > [!WARNING]  
@@ -454,6 +526,9 @@ if __name__ == "__main__":
 
 > [!WARNING]  
 > `pydantic-typer` does not yet support self-referential pydantic models.
+
+> [!WARNING]  
+> `pydantic-typer` does not yet support lists with complex sub-types, in particular unions such as `list[str|int]`.
 
 ## License
 
