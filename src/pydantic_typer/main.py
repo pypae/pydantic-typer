@@ -168,6 +168,11 @@ def _parse_error_type(error_message: str) -> type | None:
     return getattr(module, class_name)
 
 
+# Markers on how to parse a cli argument with pydantic
+ParsePython = object()
+ParseStr = object()
+
+
 def enable_pydantic_type_validation(callback: CommandFunctionType) -> CommandFunctionType:
     """
     A decorator that ensures Pydantic validation is applied to parameters of Typer commands, including those with types
@@ -212,6 +217,7 @@ def enable_pydantic_type_validation(callback: CommandFunctionType) -> CommandFun
             # We can't raise now. Typer will raise in the right moment.
             continue
         except RuntimeError as e:
+            # RuntimeError is raised for most unsupported types (e.g. pydantic models)
             # FIXME: For now, we parse the unsupported type from the RuntimeError.
             error_type = _parse_error_type(str(e))
             updated_annotation = _recursive_replace_annotation(
@@ -224,9 +230,17 @@ def enable_pydantic_type_validation(callback: CommandFunctionType) -> CommandFun
                 param_name,
                 kind=original_parameter.kind,
                 default=original_parameter.default,
-                annotation=updated_annotation,
+                annotation=Annotated[updated_annotation, ParsePython],
             )
             updated_parameters[param_name] = updated_parameter
+        except AssertionError as e:
+            # Assertion error is raised for union types, which we support by using str and parsing that with pydantic.
+            updated_parameters[param_name] = inspect.Parameter(
+                param_name,
+                kind=original_parameter.kind,
+                default=original_parameter.default,
+                annotation=Annotated[str, ParseStr],
+            )
 
     new_signature = inspect.Signature(
         parameters=list(updated_parameters.values()), return_annotation=original_signature.return_annotation
@@ -237,12 +251,24 @@ def enable_pydantic_type_validation(callback: CommandFunctionType) -> CommandFun
     def wrapper(*args, **kwargs):  # type: ignore[no-untyped-def]
         bound_params = original_signature.bind(*args, **kwargs)
         for name, value in bound_params.arguments.items():
+            annotation = original_signature.parameters[name].annotation
+            updated_annotation = new_signature.parameters[name].annotation
+            if annotation == updated_annotation:
+                continue
+            # We only need to parse parameters where we changed the annotation
             try:
-                type_adapter = pydantic.TypeAdapter(original_signature.parameters[name].annotation)
+                type_adapter = pydantic.TypeAdapter(annotation)
             except pydantic.PydanticSchemaGenerationError:
                 continue
+
             try:
-                bound_params.arguments[name] = type_adapter.validate_python(value)
+                # We can be sure that the last arg is a parse_as marker, because of the
+                # if annotation == updated_annotation conditon above.
+                *_, parse_as = get_args(updated_annotation)
+                if parse_as is ParsePython:
+                    bound_params.arguments[name] = type_adapter.validate_python(value)
+                elif parse_as is ParseStr:
+                    bound_params.arguments[name] = type_adapter.validate_strings(value)
             except pydantic.ValidationError as e:
                 raise BadParameter(message=e.errors()[0]["msg"], param_hint=name) from e
         callback(*bound_params.args, **bound_params.kwargs)
