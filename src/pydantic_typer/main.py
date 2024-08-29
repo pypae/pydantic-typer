@@ -234,13 +234,19 @@ def enable_pydantic_type_validation(callback: CommandFunctionType) -> CommandFun
             )
             updated_parameters[param_name] = updated_parameter
         except AssertionError as e:
-            # Assertion error is raised for union types, which we support by using str and parsing that with pydantic.
-            updated_parameters[param_name] = inspect.Parameter(
-                param_name,
-                kind=original_parameter.kind,
-                default=original_parameter.default,
-                annotation=Annotated[str, ParseStr],
-            )
+            # Assertion error is raised for union and list types with complex sub-types,
+            # which we support by using str and parsing that with pydantic.
+            if "List types with complex sub-types are not currently supported" in e.args:
+                # TODO we don't support complex list types yet either.
+                # Do not modify param, will be raised again by typer.
+                continue
+            if "Typer Currently doesn't support Union types" in e.args:
+                updated_parameters[param_name] = inspect.Parameter(
+                    param_name,
+                    kind=original_parameter.kind,
+                    default=original_parameter.default,
+                    annotation=Annotated[str, ParseStr],
+                )
 
     new_signature = inspect.Signature(
         parameters=list(updated_parameters.values()), return_annotation=original_signature.return_annotation

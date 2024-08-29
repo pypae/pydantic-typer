@@ -3,7 +3,7 @@ import typer
 import pydantic_typer
 
 
-def main(value: bool | float | int | str = 1):
+def main(value: bool | int | float | str = 1):
     typer.echo(f"{value} {type(value)}")
 
 
