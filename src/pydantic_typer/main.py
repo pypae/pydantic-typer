@@ -153,7 +153,7 @@ def _recursive_replace_annotation(original_annotation, type_to_replace, replacem
                 updated_args.append(arg)
             else:
                 updated_args.append(_recursive_replace_annotation(arg, type_to_replace, replacement))
-        return origin[Unpack(updated_args)]
+        return origin[Unpack[updated_args]]
     return original_annotation
 
 
