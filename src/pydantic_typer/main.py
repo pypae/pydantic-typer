@@ -4,7 +4,7 @@ import importlib
 import inspect
 import re
 from functools import wraps
-from typing import Any, Callable, get_args, get_origin
+from typing import Any, Callable, Unpack, get_args, get_origin
 
 import click
 import pydantic
@@ -153,7 +153,7 @@ def _recursive_replace_annotation(original_annotation, type_to_replace, replacem
                 updated_args.append(arg)
             else:
                 updated_args.append(_recursive_replace_annotation(arg, type_to_replace, replacement))
-        return origin[*updated_args]
+        return origin[Unpack(updated_args)]
     return original_annotation
 
 
