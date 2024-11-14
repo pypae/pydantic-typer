@@ -4,7 +4,7 @@ import importlib
 import inspect
 import re
 from functools import wraps
-from typing import Any, Callable, Unpack, get_args, get_origin
+from typing import Any, Callable, get_args, get_origin
 
 import click
 import pydantic
@@ -143,7 +143,6 @@ def _recursive_replace_annotation(original_annotation, type_to_replace, replacem
         # typing.Annotated[pydantic_core._pydantic_core.Url, UrlConstraints(max_length=2083, allowed_schemes=['http', 'https'], host_required=None, default_host=None, default_port=None, default_path=None)]
         return replacement
     if origin in (Annotated, tuple, list):
-        # This is probably a list or tuple. Replace the error type inside the list/tuple.
         args = get_args(original_annotation)
         updated_args = []
         for arg in args:
@@ -151,9 +150,11 @@ def _recursive_replace_annotation(original_annotation, type_to_replace, replacem
                 # lists of pydantic.BaseModels are handled in enable_pydantic,
                 # so we don't need to replace their annotation.
                 updated_args.append(arg)
+
             else:
                 updated_args.append(_recursive_replace_annotation(arg, type_to_replace, replacement))
-        return origin[Unpack[updated_args]]
+        return origin[tuple(updated_args)]
+
     return original_annotation
 
 
