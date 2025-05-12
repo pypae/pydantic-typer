@@ -14,7 +14,7 @@ Do not edit `README.md` manually, instead edit `docs/README.template.md` and run
 > This package is still in early development and some things might not work as expected, or change between versions.
 
 
-> [!INFO]  
+> [!TIP]  
 > You might want to use the [`pydantic-settings` CLI feature](https://docs.pydantic.dev/latest/concepts/pydantic_settings/#command-line-support) instead.
 ---
 
