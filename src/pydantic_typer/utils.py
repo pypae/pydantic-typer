@@ -44,6 +44,28 @@ def inspect_signature(func: Callable[..., Any]) -> inspect.Signature:  # pragma:
         signature = raw_signature.replace(parameters=resolved_params)
     return signature
 
+def _clear_empty_dictionaries(dictionary : dict) -> dict:
+    """A utility to recursively remove empty dictionaries
+    so they will not overwrite anything when used for updates.
+
+    Args:
+        dictionary : dict
+            The dictionary in question, which may have any heterogeneous contents
+
+    Returns:
+        The input dictionary with any empty dictionaries removed recursively
+    """
+    new_dict = {}
+    for key,val in dictionary.items():
+        if isinstance(val, dict):
+            new_val = _clear_empty_dictionaries(val)
+            if not new_val:
+                continue
+            else:
+                new_dict[key] = new_val
+        else:
+            new_dict[key] = val
+    return new_dict
 
 _T = TypeVar("_T")
 
